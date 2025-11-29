@@ -43,6 +43,24 @@ npm run build
 npm run preview
 ```
 
+## Deployment
+
+### GitHub Pages
+
+This app is configured for automatic deployment to GitHub Pages:
+
+1. Enable GitHub Pages in repository settings (Settings > Pages)
+2. Set source to "GitHub Actions"
+3. Push to main branch
+
+The site will be available at: `https://<username>.github.io/<repository-name>/`
+
+For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+### Other Platforms
+
+The static build output in the `build` folder can be deployed to any static hosting service (Vercel, Netlify, Cloudflare Pages, etc.)
+
 ## Testing
 
 Since the web interface may not be accessible in all environments, you can test the core functionality:
