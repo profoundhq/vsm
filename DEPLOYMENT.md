@@ -11,7 +11,25 @@ This application is configured for automatic deployment to GitHub Pages.
 
 ### Setup Steps
 
-#### 1. Enable GitHub Pages
+#### Option A: Enable GitHub Pages with GitHub CLI (Recommended)
+
+If you have `gh` CLI installed:
+
+```bash
+# Run the setup script
+./setup-gh-pages.sh
+```
+
+Or manually:
+
+```bash
+# Enable GitHub Pages with GitHub Actions
+gh api repos/profoundhq/vsm/pages \
+  -X POST \
+  -f build_type=workflow
+```
+
+#### Option B: Enable GitHub Pages via Web UI
 
 1. Go to your repository on GitHub
 2. Navigate to **Settings** > **Pages**
