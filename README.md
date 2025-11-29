@@ -43,6 +43,31 @@ npm run build
 npm run preview
 ```
 
+## Testing
+
+Since the web interface may not be accessible in all environments, you can test the core functionality:
+
+### Run Automated Tests
+
+```bash
+node test-vsm-store.js
+```
+
+This validates:
+- ✅ Stream creation and management
+- ✅ Activity handling (backward mapping)
+- ✅ Timing and dimension data
+- ✅ Constraint identification
+- ✅ Chat workflow progression
+
+### Verify Production Build
+
+```bash
+npm run build
+```
+
+For detailed testing instructions, see [TESTING.md](./TESTING.md)
+
 ## Usage
 
 ### Chat Commands
