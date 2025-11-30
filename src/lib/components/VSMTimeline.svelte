@@ -1,12 +1,45 @@
 <script lang="ts">
 	import { vsmStore } from '$lib/stores/vsmStore';
+	import type { TimeUnit } from '$lib/types/vsm';
+
+	let isExpanded = true;
 
 	$: activities = $vsmStore.stream?.activities || [];
 
-	// Calculate summary statistics
-	$: totalProcessTime = activities.reduce((sum, a) => sum + (a.processTime || 0), 0);
-	$: totalLeadTime = activities.reduce((sum, a) => sum + (a.leadTime || 0), 0);
-	$: cycleEfficiency = totalLeadTime > 0 ? (totalProcessTime / totalLeadTime * 100).toFixed(1) : 0;
+	// Helper to normalize time to minutes
+	function normalizeToMinutes(value: number, unit?: TimeUnit): number {
+		if (!unit) return value; // Default to minutes if no unit specified
+		switch (unit) {
+			case 'hours': return value * 60;
+			case 'days': return value * 60 * 24;
+			case 'mins':
+			default: return value;
+		}
+	}
+
+	// Helper to format time with best unit
+	function formatTime(minutes: number): { value: number, unit: string } {
+		if (minutes >= 1440) { // >= 1 day
+			return { value: +(minutes / 1440).toFixed(1), unit: 'days' };
+		} else if (minutes >= 60) { // >= 1 hour
+			return { value: +(minutes / 60).toFixed(1), unit: 'hours' };
+		} else {
+			return { value: +minutes.toFixed(1), unit: 'mins' };
+		}
+	}
+
+	// Calculate summary statistics (normalized to minutes)
+	$: totalProcessTimeMinutes = activities.reduce(
+		(sum, a) => sum + normalizeToMinutes(a.processTime || 0, a.processTimeUnit), 0
+	);
+	$: totalLeadTimeMinutes = activities.reduce(
+		(sum, a) => sum + normalizeToMinutes(a.leadTime || 0, a.leadTimeUnit), 0
+	);
+	$: totalProcessTime = formatTime(totalProcessTimeMinutes);
+	$: totalLeadTime = formatTime(totalLeadTimeMinutes);
+	$: cycleEfficiency = totalLeadTimeMinutes > 0
+		? (totalProcessTimeMinutes / totalLeadTimeMinutes * 100).toFixed(1)
+		: 0;
 	$: activityCount = activities.length;
 	$: averageDefectRate = activities.length > 0
 		? (activities.reduce((sum, a) => sum + (a.dimensions?.defectRate || 0), 0) / activities.length).toFixed(1)
@@ -22,145 +55,195 @@
 	$: totalOperators = activities.reduce((sum, a) => sum + (a.metrics?.operators || 0), 0);
 	$: totalBatchSize = activities.reduce((sum, a) => sum + (a.metrics?.batchSize || 0), 0);
 
-	// Calculate Rolled Throughput Yield (RTY) - product of all %C&A values
+	// Calculate Rolled Throughput Yield (RTY)
 	$: rolledThroughputYield = activities.length > 0 && activities.some(a => a.metrics?.completeAccurate)
 		? (activities.reduce((product, a) => product * ((a.metrics?.completeAccurate || 100) / 100), 1) * 100).toFixed(1)
 		: 0;
 
-	// Calculate timeline segments for visualization
-	$: timelineSegments = activities.map(a => ({
-		name: a.name,
-		processTime: a.processTime || 0,
-		leadTime: a.leadTime || 0,
-		waitTime: (a.leadTime || 0) - (a.processTime || 0)
-	}));
+	// Calculate timeline segments (all in minutes)
+	$: timelineSegments = activities.map(a => {
+		const processMinutes = normalizeToMinutes(a.processTime || 0, a.processTimeUnit);
+		const leadMinutes = normalizeToMinutes(a.leadTime || 0, a.leadTimeUnit);
+		return {
+			name: a.name,
+			processTime: processMinutes,
+			processDisplay: a.processTime ? `${a.processTime}${a.processTimeUnit || 'mins'}` : '',
+			leadTime: leadMinutes,
+			leadDisplay: a.leadTime ? `${a.leadTime}${a.leadTimeUnit || 'hours'}` : '',
+			waitTime: leadMinutes - processMinutes
+		};
+	});
+
+	// Calculate max time for scaling the visualization
+	$: maxLeadTime = Math.max(...timelineSegments.map(s => s.leadTime), 1);
 
 	$: hasData = activities.some(a => a.processTime !== undefined || a.leadTime !== undefined);
+
+	function toggleExpanded() {
+		isExpanded = !isExpanded;
+	}
 </script>
 
 {#if hasData && activities.length > 0}
-	<div class="timeline-container">
-		<div class="timeline-header">
-			<h3>Timeline & Statistics</h3>
-		</div>
+	<div class="timeline-container" class:collapsed={!isExpanded}>
+		<button class="timeline-header" on:click={toggleExpanded}>
+			<div class="header-left">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expand-icon" class:expanded={isExpanded}>
+					<polyline points="6 9 12 15 18 9" />
+				</svg>
+				<h3>Timeline & Statistics</h3>
+			</div>
+			<div class="header-stats">
+				<span class="quick-stat">PCE: <strong>{cycleEfficiency}%</strong></span>
+				<span class="quick-stat">{totalLeadTime.value}{totalLeadTime.unit} total</span>
+			</div>
+		</button>
 
-		<!-- Visual Timeline -->
-		<div class="timeline-visual">
-			<div class="timeline-row">
-				<span class="timeline-label">Process Time</span>
-				<div class="timeline-bars">
-					{#each timelineSegments as segment}
-						{#if segment.processTime > 0}
-							<div class="timeline-segment process" title="{segment.name}: {segment.processTime}min">
-								<span class="segment-label">{segment.processTime}m</span>
-							</div>
-						{/if}
-					{/each}
+		{#if isExpanded}
+			<!-- Summary Statistics -->
+			<div class="stats-grid">
+				<div class="stat-card highlight">
+					<div class="stat-value">{cycleEfficiency}%</div>
+					<div class="stat-label">Process Cycle Efficiency</div>
+					<div class="stat-help">Value-add ÷ Total time</div>
 				</div>
+
+				<div class="stat-card">
+					<div class="stat-value">{totalProcessTime.value}<span class="unit">{totalProcessTime.unit}</span></div>
+					<div class="stat-label">Total Value-Add Time</div>
+					<div class="stat-help">Actual work time</div>
+				</div>
+
+				<div class="stat-card">
+					<div class="stat-value">{totalLeadTime.value}<span class="unit">{totalLeadTime.unit}</span></div>
+					<div class="stat-label">Total Lead Time</div>
+					<div class="stat-help">End-to-end time</div>
+				</div>
+
+				{#if rolledThroughputYield > 0}
+					<div class="stat-card highlight">
+						<div class="stat-value">{rolledThroughputYield}%</div>
+						<div class="stat-label">Rolled Throughput Yield</div>
+						<div class="stat-help">Product of all %C&A</div>
+					</div>
+				{/if}
+
+				{#if averageCompleteAccurate > 0}
+					<div class="stat-card">
+						<div class="stat-value">{averageCompleteAccurate}%</div>
+						<div class="stat-label">Avg Complete & Accurate</div>
+						<div class="stat-help">Quality metric</div>
+					</div>
+				{/if}
+
+				{#if averageUptime > 0}
+					<div class="stat-card">
+						<div class="stat-value">{averageUptime}%</div>
+						<div class="stat-label">Avg Uptime</div>
+						<div class="stat-help">Availability</div>
+					</div>
+				{/if}
+
+				{#if totalOperators > 0}
+					<div class="stat-card">
+						<div class="stat-value">{totalOperators}</div>
+						<div class="stat-label">Total Operators</div>
+						<div class="stat-help">Full headcount</div>
+					</div>
+				{/if}
+
+				{#if averageDefectRate > 0}
+					<div class="stat-card warning">
+						<div class="stat-value">{averageDefectRate}%</div>
+						<div class="stat-label">Avg Defect Rate</div>
+						<div class="stat-help">Requires rework</div>
+					</div>
+				{/if}
 			</div>
 
-			<div class="timeline-row">
-				<span class="timeline-label">Lead Time</span>
-				<div class="timeline-bars">
+			<!-- Visual Timeline -->
+			<div class="timeline-visual">
+				<div class="timeline-title">Activity Timeline (proportional to lead time)</div>
+				<div class="timeline-activities">
 					{#each timelineSegments as segment}
 						{#if segment.leadTime > 0}
-							<div class="timeline-segment lead" title="{segment.name}: {segment.leadTime}min total">
-								<div class="lead-breakdown">
-									{#if segment.processTime > 0}
-										<div class="process-portion" style="width: {(segment.processTime / segment.leadTime * 100)}%">
-											{segment.processTime}m
+							<div class="activity-row">
+								<div class="activity-name">{segment.name}</div>
+								<div class="activity-bar-container">
+									<div
+										class="activity-bar"
+										style="width: {(segment.leadTime / maxLeadTime * 100)}%"
+										title="Lead time: {segment.leadDisplay}"
+									>
+										<div
+											class="process-time"
+											style="width: {segment.processTime > 0 ? (segment.processTime / segment.leadTime * 100) : 0}%"
+											title="Process time: {segment.processDisplay}"
+										>
+											{#if segment.processTime > 0}
+												<span class="bar-label">{segment.processDisplay}</span>
+											{/if}
 										</div>
-									{/if}
-									{#if segment.waitTime > 0}
-										<div class="wait-portion" style="width: {(segment.waitTime / segment.leadTime * 100)}%">
-											{segment.waitTime}m
-										</div>
-									{/if}
+										{#if segment.waitTime > 0}
+											<div class="wait-time" title="Wait time: {formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}">
+												<span class="bar-label">{formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}</span>
+											</div>
+										{/if}
+									</div>
+									<span class="total-time">{segment.leadDisplay}</span>
 								</div>
 							</div>
 						{/if}
 					{/each}
 				</div>
 			</div>
-		</div>
-
-		<!-- Summary Statistics -->
-		<div class="stats-grid">
-			<div class="stat-card">
-				<div class="stat-value">{totalProcessTime}</div>
-				<div class="stat-label">Total Value-Add Time (min)</div>
-			</div>
-
-			<div class="stat-card">
-				<div class="stat-value">{totalLeadTime}</div>
-				<div class="stat-label">Total Lead Time (min)</div>
-			</div>
-
-			<div class="stat-card highlight">
-				<div class="stat-value">{cycleEfficiency}%</div>
-				<div class="stat-label">Process Cycle Efficiency (PCE)</div>
-			</div>
-
-			{#if averageCompleteAccurate > 0}
-				<div class="stat-card highlight">
-					<div class="stat-value">{averageCompleteAccurate}%</div>
-					<div class="stat-label">Avg %C&A</div>
-				</div>
-			{/if}
-
-			{#if rolledThroughputYield > 0}
-				<div class="stat-card">
-					<div class="stat-value">{rolledThroughputYield}%</div>
-					<div class="stat-label">Rolled Throughput Yield</div>
-				</div>
-			{/if}
-
-			{#if averageUptime > 0}
-				<div class="stat-card">
-					<div class="stat-value">{averageUptime}%</div>
-					<div class="stat-label">Avg Uptime</div>
-				</div>
-			{/if}
-
-			{#if totalOperators > 0}
-				<div class="stat-card">
-					<div class="stat-value">{totalOperators}</div>
-					<div class="stat-label">Total Operators</div>
-				</div>
-			{/if}
-
-			{#if totalBatchSize > 0}
-				<div class="stat-card">
-					<div class="stat-value">{totalBatchSize}</div>
-					<div class="stat-label">Total Batch Size</div>
-				</div>
-			{/if}
-
-			<div class="stat-card">
-				<div class="stat-value">{activityCount}</div>
-				<div class="stat-label">Total Activities</div>
-			</div>
-
-			{#if averageDefectRate > 0}
-				<div class="stat-card warning">
-					<div class="stat-value">{averageDefectRate}%</div>
-					<div class="stat-label">Avg Defect Rate</div>
-				</div>
-			{/if}
-		</div>
+		{/if}
 	</div>
 {/if}
 
 <style>
+	/* Mobile-first design */
 	.timeline-container {
 		background: white;
 		border-top: 2px solid var(--color-border);
-		padding: 12px;
-		position: relative;
+		overflow: hidden;
+	}
+
+	.timeline-container.collapsed {
+		border-top: 1px solid var(--color-border);
 	}
 
 	.timeline-header {
-		margin-bottom: 12px;
+		width: 100%;
+		background: #f8f9fa;
+		border: none;
+		padding: 12px 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+		transition: background 0.2s;
+		gap: 12px;
+	}
+
+	.timeline-header:hover {
+		background: #f0f1f3;
+	}
+
+	.header-left {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-width: 0;
+	}
+
+	.expand-icon {
+		flex-shrink: 0;
+		transition: transform 0.2s;
+	}
+
+	.expand-icon.expanded {
+		transform: rotate(180deg);
 	}
 
 	.timeline-header h3 {
@@ -168,104 +251,46 @@
 		font-size: 14px;
 		font-weight: 600;
 		color: #333;
+		white-space: nowrap;
 	}
 
-	.timeline-visual {
-		margin-bottom: 16px;
-		background: #fafafa;
-		padding: 12px;
-		border-radius: 8px;
-	}
-
-	.timeline-row {
+	.header-stats {
 		display: flex;
-		align-items: center;
-		margin-bottom: 10px;
 		gap: 12px;
-	}
-
-	.timeline-row:last-child {
-		margin-bottom: 0;
-	}
-
-	.timeline-label {
-		font-size: 11px;
-		font-weight: 600;
+		font-size: 12px;
 		color: #666;
-		min-width: 80px;
 		flex-shrink: 0;
 	}
 
-	.timeline-bars {
-		display: flex;
-		gap: 4px;
-		flex: 1;
-		overflow-x: auto;
-	}
-
-	.timeline-segment {
-		padding: 6px 8px;
-		border-radius: 4px;
-		font-size: 10px;
-		font-weight: 600;
+	.quick-stat {
 		white-space: nowrap;
-		min-width: 40px;
-		text-align: center;
 	}
 
-	.timeline-segment.process {
-		background: var(--color-primary);
-		color: white;
+	.quick-stat strong {
+		color: var(--color-primary);
 	}
 
-	.timeline-segment.lead {
-		background: #e0e0e0;
-		padding: 0;
-		overflow: hidden;
-	}
-
-	.lead-breakdown {
-		display: flex;
-		height: 100%;
-		font-size: 9px;
-		font-weight: 600;
-	}
-
-	.process-portion {
-		background: var(--color-primary);
-		color: white;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 6px 4px;
-	}
-
-	.wait-portion {
-		background: #fbbf24;
-		color: #78350f;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 6px 4px;
-	}
-
-	.segment-label {
-		display: block;
-	}
-
+	/* Statistics Grid */
 	.stats-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-		gap: 10px;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 12px;
+		padding: 16px;
+		border-bottom: 1px solid #e5e7eb;
 	}
 
 	.stat-card {
 		background: #f8f9fa;
-		padding: 10px;
-		border-radius: 6px;
+		padding: 14px 12px;
+		border-radius: 8px;
 		text-align: center;
 		border: 2px solid transparent;
 		transition: all 0.2s;
+	}
+
+	.stat-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 	}
 
 	.stat-card.highlight {
@@ -279,73 +304,213 @@
 	}
 
 	.stat-value {
-		font-size: 18px;
+		font-size: 24px;
 		font-weight: 700;
 		color: #333;
-		margin-bottom: 4px;
+		margin-bottom: 6px;
+		line-height: 1;
+	}
+
+	.stat-value .unit {
+		font-size: 14px;
+		font-weight: 600;
+		color: #666;
+		margin-left: 2px;
 	}
 
 	.stat-label {
-		font-size: 10px;
+		font-size: 11px;
 		color: #666;
-		font-weight: 500;
+		font-weight: 600;
+		line-height: 1.3;
+		margin-bottom: 4px;
+	}
+
+	.stat-help {
+		font-size: 10px;
+		color: #999;
+		font-weight: 400;
 		line-height: 1.2;
 	}
 
-	/* Tablet and desktop */
-	@media (min-width: 768px) {
-		.timeline-container {
-			padding: 16px 20px;
+	/* Timeline Visual */
+	.timeline-visual {
+		padding: 16px;
+		background: #fafafa;
+	}
+
+	.timeline-title {
+		font-size: 12px;
+		font-weight: 600;
+		color: #666;
+		margin-bottom: 12px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.timeline-activities {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.activity-row {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.activity-name {
+		font-size: 12px;
+		font-weight: 600;
+		color: #333;
+	}
+
+	.activity-bar-container {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.activity-bar {
+		display: flex;
+		height: 32px;
+		min-width: 60px;
+		border-radius: 4px;
+		overflow: hidden;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	}
+
+	.process-time {
+		background: var(--color-primary);
+		color: white;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 11px;
+		font-weight: 600;
+		position: relative;
+	}
+
+	.wait-time {
+		background: #fbbf24;
+		color: #78350f;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 11px;
+		font-weight: 600;
+		flex: 1;
+	}
+
+	.bar-label {
+		padding: 0 6px;
+		white-space: nowrap;
+	}
+
+	.total-time {
+		font-size: 11px;
+		font-weight: 600;
+		color: #666;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	/* Tablet */
+	@media (min-width: 640px) {
+		.timeline-header {
+			padding: 14px 20px;
 		}
 
 		.timeline-header h3 {
 			font-size: 16px;
 		}
 
-		.timeline-visual {
-			padding: 16px;
-		}
-
-		.timeline-label {
-			font-size: 12px;
-			min-width: 100px;
-		}
-
-		.timeline-segment {
-			padding: 8px 10px;
-			font-size: 11px;
-		}
-
-		.lead-breakdown {
-			font-size: 10px;
-		}
-
-		.process-portion,
-		.wait-portion {
-			padding: 8px 6px;
+		.header-stats {
+			font-size: 13px;
 		}
 
 		.stats-grid {
-			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-			gap: 12px;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 14px;
+			padding: 20px;
 		}
 
 		.stat-card {
-			padding: 14px;
+			padding: 16px 14px;
 		}
 
 		.stat-value {
-			font-size: 22px;
+			font-size: 28px;
 		}
 
 		.stat-label {
-			font-size: 11px;
+			font-size: 12px;
+		}
+
+		.activity-row {
+			flex-direction: row;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.activity-name {
+			min-width: 140px;
+			font-size: 13px;
 		}
 	}
 
+	/* Desktop */
 	@media (min-width: 1024px) {
+		.timeline-header {
+			padding: 16px 24px;
+		}
+
 		.stats-grid {
-			grid-template-columns: repeat(5, 1fr);
+			grid-template-columns: repeat(4, 1fr);
+			gap: 16px;
+			padding: 24px;
+		}
+
+		.stat-card {
+			padding: 18px 16px;
+		}
+
+		.stat-value {
+			font-size: 32px;
+		}
+
+		.stat-label {
+			font-size: 13px;
+		}
+
+		.stat-help {
+			font-size: 11px;
+		}
+
+		.timeline-visual {
+			padding: 20px 24px;
+		}
+
+		.timeline-title {
+			font-size: 13px;
+		}
+
+		.activity-name {
+			min-width: 180px;
+			font-size: 14px;
+		}
+
+		.activity-bar {
+			height: 36px;
+		}
+
+		.bar-label {
+			font-size: 12px;
+		}
+
+		.total-time {
+			font-size: 12px;
 		}
 	}
 </style>
