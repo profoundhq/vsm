@@ -4,9 +4,7 @@
 	import VSMFlow from '$lib/components/VSMFlow.svelte';
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
 	import StreamManager from '$lib/components/StreamManager.svelte';
-	import ExportImport from '$lib/components/ExportImport.svelte';
-	import DiagramExport from '$lib/components/DiagramExport.svelte';
-	import BulkUpdate from '$lib/components/BulkUpdate.svelte';
+	import AppMenu from '$lib/components/AppMenu.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let showChat = true;
@@ -84,16 +82,14 @@
 				</div>
 				<div class="header-actions">
 					<StreamManager />
-					<BulkUpdate />
-					<ExportImport />
-					<DiagramExport />
-					<button class="toggle-button" on:click={toggleChat}>
-						{showChat ? 'Hide' : 'Show'} Chat
-					</button>
+					<AppMenu
+						showChat={showChat}
+						onToggleChat={toggleChat}
+						onReset={handleReset}
+					/>
 					<button class="present-button" on:click={enterPresentationMode}>
 						🎯 Present
 					</button>
-					<button class="reset-button" on:click={handleReset}>Reset</button>
 				</div>
 			</div>
 		</header>
@@ -170,12 +166,10 @@
 		width: 100%;
 	}
 
-	.toggle-button,
-	.reset-button,
 	.present-button {
 		padding: 6px 10px;
-		background: rgba(255, 255, 255, 0.2);
-		border: 1px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 215, 0, 0.3);
+		border: 1px solid rgba(255, 215, 0, 0.5);
 		color: white;
 		border-radius: 6px;
 		cursor: pointer;
@@ -186,18 +180,8 @@
 		flex-shrink: 0;
 	}
 
-	.present-button {
-		background: rgba(255, 215, 0, 0.3);
-		border-color: rgba(255, 215, 0, 0.5);
-	}
-
 	.present-button:hover {
 		background: rgba(255, 215, 0, 0.4);
-	}
-
-	.toggle-button:hover,
-	.reset-button:hover {
-		background: rgba(255, 255, 255, 0.3);
 	}
 
 	/* Presentation Mode Styles */
@@ -295,8 +279,6 @@
 			font-size: 13px;
 		}
 
-		.toggle-button,
-		.reset-button,
 		.present-button {
 			padding: 6px 12px;
 			font-size: 12px;
@@ -316,8 +298,6 @@
 			font-size: 14px;
 		}
 
-		.toggle-button,
-		.reset-button,
 		.present-button {
 			padding: 8px 16px;
 			font-size: 14px;
