@@ -21,7 +21,9 @@
     "vite": "^5.0.3"
   },
   "dependencies": {
-    "@xyflow/svelte": "^0.1.0"
+    "@xyflow/svelte": "^0.1.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.4"
   },
   "type": "module"
 }

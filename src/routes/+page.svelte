@@ -2,6 +2,9 @@
 	import ChatInterface from '$lib/components/ChatInterface.svelte';
 	import VSMFlow from '$lib/components/VSMFlow.svelte';
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
+	import StreamManager from '$lib/components/StreamManager.svelte';
+	import ExportImport from '$lib/components/ExportImport.svelte';
+	import DiagramExport from '$lib/components/DiagramExport.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let showChat = true;
@@ -29,6 +32,9 @@
 				<p class="subtitle">Build your value stream map backwards from the end</p>
 			</div>
 			<div class="header-actions">
+				<StreamManager />
+				<ExportImport />
+				<DiagramExport />
 				<button class="toggle-button" on:click={toggleChat}>
 					{showChat ? 'Hide' : 'Show'} Chat
 				</button>

@@ -5,6 +5,12 @@ export type WorkflowStep =
 	| 'add-dimensions'
 	| 'highlight-constraint';
 
+export interface KaizenBurst {
+	id: string;
+	description: string;
+	priority?: 'low' | 'medium' | 'high';
+}
+
 export interface VSMActivity {
 	id: string;
 	name: string;
@@ -22,6 +28,8 @@ export interface VSMActivity {
 		batchSize?: number; // Batch/lot size
 	};
 	isConstraint?: boolean;
+	kaizenBursts?: KaizenBurst[]; // Improvement opportunities
+	swimlane?: string; // Department/role
 }
 
 export interface VSMStream {
@@ -40,5 +48,8 @@ export interface ChatMessage {
 export interface VSMState {
 	currentStep: WorkflowStep;
 	stream: VSMStream | null;
+	streams: VSMStream[]; // All saved streams
+	currentStreamId: string | null; // Active stream
 	messages: ChatMessage[];
+	swimlanes: string[]; // Available swimlanes/departments
 }

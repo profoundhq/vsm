@@ -8,6 +8,7 @@
 	$: isEnd = data.isEnd || false;
 	$: hasTimingData = data.processTime !== undefined || data.leadTime !== undefined;
 	$: hasDimensionsData = data.dimensions && Object.keys(data.dimensions).length > 0;
+	$: hasKaizenBursts = data.kaizenBursts && data.kaizenBursts.length > 0;
 </script>
 
 <div class="vsm-node" class:constraint={data.isConstraint} class:start={isStart} class:end={isEnd}>
@@ -29,6 +30,10 @@
 			<span class="constraint-badge">⚠️ Constraint</span>
 		{/if}
 	</div>
+
+	{#if data.swimlane}
+		<div class="swimlane-badge">{data.swimlane}</div>
+	{/if}
 
 	{#if hasTimingData}
 		<div class="node-timing">
@@ -61,6 +66,17 @@
 		</div>
 	{/if}
 
+	{#if hasKaizenBursts}
+		<div class="kaizen-bursts">
+			{#each data.kaizenBursts || [] as burst}
+				<div class="kaizen-burst" class:high={burst.priority === 'high'} class:medium={burst.priority === 'medium'}>
+					<span class="burst-icon">⚡</span>
+					<span class="burst-text">{burst.description}</span>
+				</div>
+			{/each}
+		</div>
+	{/if}
+
 	<Handle type="source" position={Position.Right} />
 </div>
 
@@ -87,6 +103,16 @@
 	.vsm-node.constraint {
 		border-color: var(--color-constraint);
 		background: #fff5f5;
+		animation: pulse-constraint 2s infinite;
+	}
+
+	@keyframes pulse-constraint {
+		0%, 100% {
+			box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+		}
+		50% {
+			box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
+		}
 	}
 
 	.vsm-node.start {
@@ -192,6 +218,58 @@
 		margin-bottom: 0;
 	}
 
+	.swimlane-badge {
+		background: #e0e7ff;
+		color: #4f46e5;
+		font-size: 10px;
+		padding: 4px 8px;
+		border-radius: 4px;
+		margin-top: 6px;
+		font-weight: 500;
+		text-align: center;
+	}
+
+	.kaizen-bursts {
+		margin-top: 8px;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.kaizen-burst {
+		background: #fef3c7;
+		border: 1px solid #fbbf24;
+		border-radius: 4px;
+		padding: 4px 6px;
+		font-size: 10px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		color: #92400e;
+	}
+
+	.kaizen-burst.high {
+		background: #fee2e2;
+		border-color: #ef4444;
+		color: #991b1b;
+	}
+
+	.kaizen-burst.medium {
+		background: #fed7aa;
+		border-color: #f97316;
+		color: #9a3412;
+	}
+
+	.burst-icon {
+		font-size: 12px;
+		line-height: 1;
+	}
+
+	.burst-text {
+		flex: 1;
+		line-height: 1.3;
+	}
+
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
 		.vsm-node {
@@ -236,6 +314,21 @@
 
 		.dim-item {
 			margin-bottom: 3px;
+		}
+
+		.swimlane-badge {
+			font-size: 11px;
+			padding: 5px 10px;
+			margin-top: 8px;
+		}
+
+		.kaizen-burst {
+			padding: 5px 8px;
+			font-size: 11px;
+		}
+
+		.burst-icon {
+			font-size: 14px;
 		}
 	}
 </style>

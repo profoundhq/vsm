@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { vsmStore } from '$lib/stores/vsmStore';
-	import type { VSMActivity } from '$lib/types/vsm';
+	import type { VSMActivity, KaizenBurst } from '$lib/types/vsm';
 
 	export let activity: VSMActivity;
 	export let onClose: () => void;
@@ -16,6 +16,29 @@
 	let operators = activity.metrics?.operators?.toString() || '';
 	let batchSize = activity.metrics?.batchSize?.toString() || '';
 	let isConstraint = activity.isConstraint || false;
+	let swimlane = activity.swimlane || '';
+	let kaizenBursts = activity.kaizenBursts || [];
+	let newBurstDescription = '';
+	let newBurstPriority: 'low' | 'medium' | 'high' = 'medium';
+
+	$: availableSwimlanes = $vsmStore.swimlanes;
+
+	function addKaizenBurst() {
+		if (newBurstDescription.trim()) {
+			const newBurst: KaizenBurst = {
+				id: Date.now().toString(),
+				description: newBurstDescription.trim(),
+				priority: newBurstPriority
+			};
+			kaizenBursts = [...kaizenBursts, newBurst];
+			newBurstDescription = '';
+			newBurstPriority = 'medium';
+		}
+	}
+
+	function removeBurst(burstId: string) {
+		kaizenBursts = kaizenBursts.filter(b => b.id !== burstId);
+	}
 
 	function handleSave() {
 		const updates: Partial<VSMActivity> = {
@@ -33,7 +56,9 @@
 				operators: operators ? parseInt(operators) : undefined,
 				batchSize: batchSize ? parseInt(batchSize) : undefined
 			},
-			isConstraint
+			isConstraint,
+			swimlane: swimlane || undefined,
+			kaizenBursts
 		};
 
 		vsmStore.updateActivity(activity.id, updates);
@@ -186,6 +211,50 @@
 							min="1"
 						/>
 					</label>
+				</div>
+			</div>
+
+			<div class="form-section">
+				<h3 class="section-title">Department/Role</h3>
+				<label class="form-label">
+					Swimlane
+					<select bind:value={swimlane} class="form-input">
+						<option value="">None</option>
+						{#each availableSwimlanes as lane}
+							<option value={lane}>{lane}</option>
+						{/each}
+					</select>
+				</label>
+			</div>
+
+			<div class="form-section">
+				<h3 class="section-title">Kaizen Bursts (Improvements)</h3>
+				{#if kaizenBursts.length > 0}
+					<div class="bursts-list">
+						{#each kaizenBursts as burst}
+							<div class="burst-item" class:high={burst.priority === 'high'} class:medium={burst.priority === 'medium'}>
+								<span class="burst-priority">{burst.priority}</span>
+								<span class="burst-desc">{burst.description}</span>
+								<button type="button" class="burst-remove" on:click={() => removeBurst(burst.id)}>×</button>
+							</div>
+						{/each}
+					</div>
+				{/if}
+				<div class="burst-form">
+					<input
+						type="text"
+						bind:value={newBurstDescription}
+						placeholder="Improvement idea..."
+						class="form-input"
+					/>
+					<div class="form-row" style="margin-top: 8px;">
+						<select bind:value={newBurstPriority} class="form-input">
+							<option value="low">Low Priority</option>
+							<option value="medium">Medium Priority</option>
+							<option value="high">High Priority</option>
+						</select>
+						<button type="button" class="btn btn-secondary" on:click={addKaizenBurst}>Add Burst</button>
+					</div>
 				</div>
 			</div>
 
@@ -421,5 +490,70 @@
 		.checkbox-label {
 			font-size: 15px;
 		}
+	}
+
+	.bursts-list {
+		margin-bottom: 12px;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.burst-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 10px;
+		background: #fef3c7;
+		border: 1px solid #fbbf24;
+		border-radius: 6px;
+		font-size: 13px;
+	}
+
+	.burst-item.high {
+		background: #fee2e2;
+		border-color: #ef4444;
+	}
+
+	.burst-item.medium {
+		background: #fed7aa;
+		border-color: #f97316;
+	}
+
+	.burst-priority {
+		font-size: 10px;
+		text-transform: uppercase;
+		font-weight: 600;
+		opacity: 0.7;
+		flex-shrink: 0;
+	}
+
+	.burst-desc {
+		flex: 1;
+	}
+
+	.burst-remove {
+		background: none;
+		border: none;
+		font-size: 24px;
+		line-height: 1;
+		cursor: pointer;
+		color: #666;
+		padding: 0;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 4px;
+		transition: all 0.15s;
+	}
+
+	.burst-remove:hover {
+		background: rgba(0, 0, 0, 0.1);
+	}
+
+	.burst-form {
+		margin-top: 8px;
 	}
 </style>
