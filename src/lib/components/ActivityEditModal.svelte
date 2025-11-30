@@ -1,9 +1,23 @@
 <script lang="ts">
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import type { VSMActivity, KaizenBurst } from '$lib/types/vsm';
+	import MetricTooltip from './MetricTooltip.svelte';
 
 	export let activity: VSMActivity;
 	export let onClose: () => void;
+
+	// Tooltip content for metrics
+	const tooltips = {
+		processTime: "Time the activity actually takes to perform (value-adding time). Measure by timing multiple cycles and taking the average.",
+		leadTime: "Total elapsed time from when work arrives until it's complete, including wait time. Track from activity start to completion.",
+		valueAdd: "Percentage of time spent adding value from the customer's perspective. Calculate: (Process Time / Lead Time) × 100",
+		defectRate: "Percentage of units requiring rework or scrapping. Track: (Defective Units / Total Units) × 100 over a period.",
+		changeoverTime: "Time needed to switch from one product/process to another. Measure from last good piece to first good piece of next run.",
+		completeAccurate: "Percentage of outputs that are 100% complete and accurate, requiring no rework. Track: (Perfect Units / Total Units) × 100",
+		uptime: "Percentage of scheduled production time that equipment is actually available. Calculate: (Available Time / Scheduled Time) × 100",
+		operators: "Number of people required to perform this activity. Count full-time equivalents if shared across activities.",
+		batchSize: "Number of units processed together before moving to next step. Observe the typical transfer batch size used."
+	};
 
 	let name = activity.name;
 	let processTime = activity.processTime?.toString() || '';
@@ -103,7 +117,10 @@
 				<h3 class="section-title">Timing</h3>
 				<div class="form-row">
 					<label class="form-label">
-						Process Time (min)
+						<span class="label-with-tooltip">
+							Process Time (min)
+							<MetricTooltip tip={tooltips.processTime} />
+						</span>
 						<input
 							type="number"
 							bind:value={processTime}
@@ -113,7 +130,10 @@
 						/>
 					</label>
 					<label class="form-label">
-						Lead Time (min)
+						<span class="label-with-tooltip">
+							Lead Time (min)
+							<MetricTooltip tip={tooltips.leadTime} />
+						</span>
 						<input
 							type="number"
 							bind:value={leadTime}
@@ -129,7 +149,10 @@
 				<h3 class="section-title">Dimensions</h3>
 				<div class="form-row">
 					<label class="form-label">
-						Value-Add (%)
+						<span class="label-with-tooltip">
+							Value-Add (%)
+							<MetricTooltip tip={tooltips.valueAdd} />
+						</span>
 						<input
 							type="number"
 							bind:value={value}
@@ -140,7 +163,10 @@
 						/>
 					</label>
 					<label class="form-label">
-						Defect Rate (%)
+						<span class="label-with-tooltip">
+							Defect Rate (%)
+							<MetricTooltip tip={tooltips.defectRate} />
+						</span>
 						<input
 							type="number"
 							bind:value={defectRate}
@@ -152,7 +178,10 @@
 					</label>
 				</div>
 				<label class="form-label">
-					Changeover Time (min)
+					<span class="label-with-tooltip">
+						Changeover Time (min)
+						<MetricTooltip tip={tooltips.changeoverTime} />
+					</span>
 					<input
 						type="number"
 						bind:value={changeoverTime}
@@ -167,7 +196,10 @@
 				<h3 class="section-title">VSM Metrics</h3>
 				<div class="form-row">
 					<label class="form-label">
-						%C&A (%)
+						<span class="label-with-tooltip">
+							%C&A (%)
+							<MetricTooltip tip={tooltips.completeAccurate} />
+						</span>
 						<input
 							type="number"
 							bind:value={completeAccurate}
@@ -179,7 +211,10 @@
 						/>
 					</label>
 					<label class="form-label">
-						Uptime (%)
+						<span class="label-with-tooltip">
+							Uptime (%)
+							<MetricTooltip tip={tooltips.uptime} />
+						</span>
 						<input
 							type="number"
 							bind:value={uptime}
@@ -192,7 +227,10 @@
 				</div>
 				<div class="form-row">
 					<label class="form-label">
-						Operators
+						<span class="label-with-tooltip">
+							Operators
+							<MetricTooltip tip={tooltips.operators} />
+						</span>
 						<input
 							type="number"
 							bind:value={operators}
@@ -202,7 +240,10 @@
 						/>
 					</label>
 					<label class="form-label">
-						Batch Size
+						<span class="label-with-tooltip">
+							Batch Size
+							<MetricTooltip tip={tooltips.batchSize} />
+						</span>
 						<input
 							type="number"
 							bind:value={batchSize}
@@ -368,6 +409,12 @@
 		font-size: 13px;
 		font-weight: 500;
 		color: #555;
+	}
+
+	.label-with-tooltip {
+		display: flex;
+		align-items: center;
+		margin-bottom: 6px;
 	}
 
 	.form-input {
