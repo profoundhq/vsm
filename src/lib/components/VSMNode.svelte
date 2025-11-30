@@ -53,17 +53,21 @@
 </div>
 
 <style>
+	/* Mobile-first node design */
 	.vsm-node {
 		background: white;
 		border: 2px solid var(--color-border);
 		border-radius: 8px;
-		padding: 12px;
-		min-width: 200px;
+		padding: 10px;
+		min-width: 160px;
+		max-width: 220px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		transition: all 0.2s;
+		touch-action: none;
 	}
 
-	.vsm-node:hover {
+	.vsm-node:hover,
+	.vsm-node:active {
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 	}
 
@@ -75,36 +79,42 @@
 	.node-header {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-start;
+		gap: 6px;
 		margin-bottom: 8px;
 	}
 
 	.node-header h3 {
-		font-size: 14px;
+		font-size: 13px;
 		font-weight: 600;
 		margin: 0;
+		line-height: 1.3;
+		flex: 1;
 	}
 
 	.constraint-badge {
-		font-size: 12px;
-		padding: 2px 6px;
+		font-size: 10px;
+		padding: 2px 5px;
 		background: var(--color-constraint);
 		color: white;
-		border-radius: 4px;
+		border-radius: 3px;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	.node-timing {
 		background: #f8f9fa;
-		padding: 8px;
+		padding: 6px 8px;
 		border-radius: 4px;
-		margin-top: 8px;
+		margin-top: 6px;
 	}
 
 	.timing-item {
 		display: flex;
 		justify-content: space-between;
-		font-size: 12px;
-		margin-bottom: 4px;
+		font-size: 11px;
+		margin-bottom: 3px;
+		gap: 8px;
 	}
 
 	.timing-item:last-child {
@@ -113,6 +123,7 @@
 
 	.label {
 		color: #666;
+		flex-shrink: 0;
 	}
 
 	.value {
@@ -122,18 +133,57 @@
 
 	.node-dimensions {
 		background: #f0f7ff;
-		padding: 8px;
+		padding: 6px 8px;
 		border-radius: 4px;
-		margin-top: 8px;
-		font-size: 11px;
+		margin-top: 6px;
+		font-size: 10px;
 	}
 
 	.dim-item {
-		margin-bottom: 3px;
+		margin-bottom: 2px;
 		color: #555;
+		line-height: 1.4;
 	}
 
 	.dim-item:last-child {
 		margin-bottom: 0;
+	}
+
+	/* Tablet and desktop */
+	@media (min-width: 768px) {
+		.vsm-node {
+			padding: 12px;
+			min-width: 200px;
+			max-width: 280px;
+		}
+
+		.node-header h3 {
+			font-size: 14px;
+		}
+
+		.constraint-badge {
+			font-size: 12px;
+			padding: 2px 6px;
+		}
+
+		.node-timing {
+			padding: 8px;
+			margin-top: 8px;
+		}
+
+		.timing-item {
+			font-size: 12px;
+			margin-bottom: 4px;
+		}
+
+		.node-dimensions {
+			padding: 8px;
+			margin-top: 8px;
+			font-size: 11px;
+		}
+
+		.dim-item {
+			margin-bottom: 3px;
+		}
 	}
 </style>

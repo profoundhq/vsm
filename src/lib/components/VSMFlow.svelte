@@ -78,12 +78,13 @@
 	{#if !$vsmStore.stream || $vsmStore.stream.activities.length === 0}
 		<div class="empty-state">
 			<h2>No activities yet</h2>
-			<p>Use the chat interface to start building your value stream map</p>
+			<p>Click "+ Add Activity" above or use the chat below to start building your value stream map</p>
 		</div>
 	{/if}
 </div>
 
 <style>
+	/* Mobile-first flow design */
 	.flow-container {
 		width: 100%;
 		height: 100%;
@@ -99,15 +100,17 @@
 		text-align: center;
 		color: #999;
 		pointer-events: none;
+		padding: 20px;
+		max-width: 90%;
 	}
 
 	.empty-state h2 {
-		font-size: 24px;
+		font-size: 18px;
 		margin-bottom: 8px;
 	}
 
 	.empty-state p {
-		font-size: 14px;
+		font-size: 13px;
 	}
 
 	:global(.svelte-flow) {
@@ -122,13 +125,49 @@
 		stroke-width: 2;
 	}
 
+	/* Mobile-optimized controls */
 	:global(.svelte-flow__controls) {
-		bottom: 20px;
-		left: 20px;
+		bottom: 10px;
+		left: 10px;
+	}
+
+	:global(.svelte-flow__controls button) {
+		width: 32px;
+		height: 32px;
 	}
 
 	:global(.svelte-flow__minimap) {
-		bottom: 20px;
-		right: 20px;
+		bottom: 10px;
+		right: 10px;
+		width: 100px;
+		height: 70px;
+	}
+
+	/* Tablet and desktop */
+	@media (min-width: 768px) {
+		.empty-state h2 {
+			font-size: 24px;
+		}
+
+		.empty-state p {
+			font-size: 14px;
+		}
+
+		:global(.svelte-flow__controls) {
+			bottom: 20px;
+			left: 20px;
+		}
+
+		:global(.svelte-flow__controls button) {
+			width: 40px;
+			height: 40px;
+		}
+
+		:global(.svelte-flow__minimap) {
+			bottom: 20px;
+			right: 20px;
+			width: 150px;
+			height: 100px;
+		}
 	}
 </style>
