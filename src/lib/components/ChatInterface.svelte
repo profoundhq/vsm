@@ -198,10 +198,6 @@
 		/>
 		<button on:click={handleSubmit} class="send-button">Send</button>
 	</div>
-
-	<div class="step-indicator">
-		Step: {currentStep.replace('-', ' ').toUpperCase()}
-	</div>
 </div>
 
 <style>
@@ -292,16 +288,6 @@
 		background: #3a7bc8;
 	}
 
-	.step-indicator {
-		padding: 6px 10px;
-		background: var(--color-secondary);
-		color: white;
-		font-size: 11px;
-		font-weight: 600;
-		text-align: center;
-		flex-shrink: 0;
-	}
-
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
 		.messages {
@@ -326,11 +312,6 @@
 		.send-button {
 			padding: 10px 20px;
 			font-size: 14px;
-		}
-
-		.step-indicator {
-			padding: 8px 14px;
-			font-size: 12px;
 		}
 	}
 </style>
