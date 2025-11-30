@@ -53,6 +53,18 @@ function createVSMStore() {
 				};
 			});
 		},
+		removeActivity: (activityId: string) => {
+			update(state => {
+				if (!state.stream) return state;
+				return {
+					...state,
+					stream: {
+						...state.stream,
+						activities: state.stream.activities.filter(activity => activity.id !== activityId)
+					}
+				};
+			});
+		},
 		setConstraint: (activityId: string) => {
 			update(state => {
 				if (!state.stream) return state;

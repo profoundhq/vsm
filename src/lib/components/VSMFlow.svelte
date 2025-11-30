@@ -11,6 +11,8 @@
 	} from '@xyflow/svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import VSMNode from './VSMNode.svelte';
+	import ActivityEditModal from './ActivityEditModal.svelte';
+	import type { VSMActivity } from '$lib/types/vsm';
 	import '@xyflow/svelte/dist/style.css';
 
 	const nodeTypes = {
@@ -19,6 +21,7 @@
 
 	let nodes = writable<Node[]>([]);
 	let edges = writable<Edge[]>([]);
+	let editingActivity: VSMActivity | null = null;
 
 	// Subscribe to VSM store and update flow nodes
 	$: {
@@ -58,7 +61,11 @@
 
 	function handleNodeClick(event: CustomEvent) {
 		const { node } = event.detail;
-		console.log('Node clicked:', node);
+		editingActivity = node.data;
+	}
+
+	function closeModal() {
+		editingActivity = null;
 	}
 </script>
 
@@ -82,6 +89,10 @@
 		</div>
 	{/if}
 </div>
+
+{#if editingActivity}
+	<ActivityEditModal activity={editingActivity} onClose={closeModal} />
+{/if}
 
 <style>
 	/* Mobile-first flow design */
