@@ -100,7 +100,10 @@
 						Menu
 					</button>
 					<button class="present-button" on:click={enterPresentationMode}>
-						🎯 Present
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+							<path d="M8 5v14l11-7z"/>
+						</svg>
+						Present
 					</button>
 				</div>
 			</div>
