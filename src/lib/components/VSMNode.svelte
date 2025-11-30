@@ -2,10 +2,10 @@
 	import { Handle, Position } from '@xyflow/svelte';
 	import type { VSMActivity } from '$lib/types/vsm';
 
-	export let data: VSMActivity;
-	export let isStart = false;
-	export let isEnd = false;
+	export let data: VSMActivity & { isStart?: boolean; isEnd?: boolean };
 
+	$: isStart = data.isStart || false;
+	$: isEnd = data.isEnd || false;
 	$: hasTimingData = data.processTime !== undefined || data.leadTime !== undefined;
 	$: hasDimensionsData = data.dimensions && Object.keys(data.dimensions).length > 0;
 </script>
