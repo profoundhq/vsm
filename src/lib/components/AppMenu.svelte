@@ -1,9 +1,4 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import BulkUpdate from './BulkUpdate.svelte';
-	import ExportImport from './ExportImport.svelte';
-	import DiagramExport from './DiagramExport.svelte';
-
 	export let showChat: boolean;
 	export let onToggleChat: () => void;
 	export let onReset: () => void;
@@ -44,30 +39,12 @@
 	{#if showMenu}
 		<div class="dropdown-menu" on:click|stopPropagation>
 			<div class="menu-section">
-				<div class="menu-title">Data Management</div>
-				<div class="menu-items">
-					<BulkUpdate />
-					<ExportImport />
-					<DiagramExport />
-				</div>
-			</div>
-
-			<div class="menu-divider"></div>
-
-			<div class="menu-section">
-				<div class="menu-title">View Options</div>
 				<button class="menu-action-item" on:click={handleToggleChat}>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
 					</svg>
 					{showChat ? 'Hide' : 'Show'} Chat
 				</button>
-			</div>
-
-			<div class="menu-divider"></div>
-
-			<div class="menu-section">
-				<div class="menu-title">Actions</div>
 				<button class="menu-action-item danger" on:click={handleReset}>
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 						<polyline points="1 4 1 10 7 10" />
@@ -121,22 +98,7 @@
 	}
 
 	.menu-section {
-		padding: 8px;
-	}
-
-	.menu-title {
-		padding: 8px 12px;
-		font-size: 0.75rem;
-		font-weight: 600;
-		color: #6b7280;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-	}
-
-	.menu-items {
-		display: flex;
-		flex-direction: column;
-		gap: 4px;
+		padding: 4px;
 	}
 
 	.menu-action-item {
@@ -166,12 +128,6 @@
 
 	.menu-action-item.danger:hover {
 		background: #fee2e2;
-	}
-
-	.menu-divider {
-		height: 1px;
-		background: #e5e7eb;
-		margin: 4px 0;
 	}
 
 	/* Responsive */

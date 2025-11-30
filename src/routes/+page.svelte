@@ -5,6 +5,9 @@
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
 	import StreamManager from '$lib/components/StreamManager.svelte';
 	import AppMenu from '$lib/components/AppMenu.svelte';
+	import BulkUpdate from '$lib/components/BulkUpdate.svelte';
+	import ExportImport from '$lib/components/ExportImport.svelte';
+	import DiagramExport from '$lib/components/DiagramExport.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let showChat = true;
@@ -82,6 +85,9 @@
 				</div>
 				<div class="header-actions">
 					<StreamManager />
+					<BulkUpdate />
+					<ExportImport />
+					<DiagramExport />
 					<AppMenu
 						showChat={showChat}
 						onToggleChat={toggleChat}
