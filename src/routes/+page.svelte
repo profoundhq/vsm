@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import ChatInterface from '$lib/components/ChatInterface.svelte';
 	import VSMFlow from '$lib/components/VSMFlow.svelte';
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
@@ -8,6 +9,8 @@
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let showChat = true;
+	let presentationMode = false;
+	let appContainer: HTMLElement;
 
 	function handleReset() {
 		if (confirm('Are you sure you want to reset the VSM? This will clear all data.')) {
@@ -18,43 +21,102 @@
 	function toggleChat() {
 		showChat = !showChat;
 	}
+
+	async function enterPresentationMode() {
+		presentationMode = true;
+		showChat = false;
+
+		// Try to enter fullscreen
+		try {
+			if (appContainer && appContainer.requestFullscreen) {
+				await appContainer.requestFullscreen();
+			}
+		} catch (e) {
+			console.log('Fullscreen not supported or denied');
+		}
+	}
+
+	function exitPresentationMode() {
+		presentationMode = false;
+
+		// Exit fullscreen if active
+		if (document.fullscreenElement) {
+			document.exitFullscreen().catch(() => {});
+		}
+	}
+
+	function handleKeydown(e: KeyboardEvent) {
+		if (e.key === 'Escape' && presentationMode) {
+			exitPresentationMode();
+		}
+	}
+
+	onMount(() => {
+		// Listen for fullscreen changes
+		const handleFullscreenChange = () => {
+			if (!document.fullscreenElement && presentationMode) {
+				presentationMode = false;
+			}
+		};
+
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+		return () => {
+			document.removeEventListener('fullscreenchange', handleFullscreenChange);
+		};
+	});
 </script>
 
 <svelte:head>
 	<title>VSM Builder - Value Stream Mapping Tool</title>
 </svelte:head>
 
-<div class="app-container">
-	<header class="app-header">
-		<div class="header-content">
-			<div class="title-section">
-				<h1>VSM Builder</h1>
-				<p class="subtitle">Build your value stream map backwards from the end</p>
+<svelte:window on:keydown={handleKeydown} />
+
+<div class="app-container" class:presentation-mode={presentationMode} bind:this={appContainer}>
+	{#if !presentationMode}
+		<header class="app-header">
+			<div class="header-content">
+				<div class="title-section">
+					<h1>VSM Builder</h1>
+					<p class="subtitle">Build your value stream map backwards from the end</p>
+				</div>
+				<div class="header-actions">
+					<StreamManager />
+					<ExportImport />
+					<DiagramExport />
+					<button class="toggle-button" on:click={toggleChat}>
+						{showChat ? 'Hide' : 'Show'} Chat
+					</button>
+					<button class="present-button" on:click={enterPresentationMode}>
+						🎯 Present
+					</button>
+					<button class="reset-button" on:click={handleReset}>Reset</button>
+				</div>
 			</div>
-			<div class="header-actions">
-				<StreamManager />
-				<ExportImport />
-				<DiagramExport />
-				<button class="toggle-button" on:click={toggleChat}>
-					{showChat ? 'Hide' : 'Show'} Chat
-				</button>
-				<button class="reset-button" on:click={handleReset}>Reset</button>
-			</div>
-		</div>
-	</header>
+		</header>
+	{/if}
 
 	<div class="main-content">
 		<main class="flow-panel">
-			<NodeToolbar />
+			{#if !presentationMode}
+				<NodeToolbar />
+			{/if}
 			<VSMFlow />
 		</main>
 
-		{#if showChat}
+		{#if showChat && !presentationMode}
 			<aside class="chat-panel">
 				<ChatInterface />
 			</aside>
 		{/if}
 	</div>
+
+	{#if presentationMode}
+		<button class="exit-presentation" on:click={exitPresentationMode}>
+			Exit Presentation (ESC)
+		</button>
+	{/if}
 </div>
 
 <style>
@@ -107,7 +169,8 @@
 	}
 
 	.toggle-button,
-	.reset-button {
+	.reset-button,
+	.present-button {
 		padding: 6px 10px;
 		background: rgba(255, 255, 255, 0.2);
 		border: 1px solid rgba(255, 255, 255, 0.3);
@@ -121,9 +184,54 @@
 		flex-shrink: 0;
 	}
 
+	.present-button {
+		background: rgba(255, 215, 0, 0.3);
+		border-color: rgba(255, 215, 0, 0.5);
+	}
+
+	.present-button:hover {
+		background: rgba(255, 215, 0, 0.4);
+	}
+
 	.toggle-button:hover,
 	.reset-button:hover {
 		background: rgba(255, 255, 255, 0.3);
+	}
+
+	/* Presentation Mode Styles */
+	.app-container.presentation-mode {
+		background: #ffffff;
+	}
+
+	.app-container.presentation-mode .main-content {
+		flex: 1;
+	}
+
+	.app-container.presentation-mode .flow-panel {
+		background: #ffffff;
+	}
+
+	.exit-presentation {
+		position: fixed;
+		top: 16px;
+		right: 16px;
+		padding: 10px 20px;
+		background: rgba(0, 0, 0, 0.8);
+		color: white;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		border-radius: 8px;
+		cursor: pointer;
+		font-weight: 600;
+		font-size: 14px;
+		z-index: 1000;
+		transition: all 0.2s;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	}
+
+	.exit-presentation:hover {
+		background: rgba(0, 0, 0, 0.9);
+		transform: translateY(-2px);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 	}
 
 	.main-content {
@@ -186,7 +294,8 @@
 		}
 
 		.toggle-button,
-		.reset-button {
+		.reset-button,
+		.present-button {
 			padding: 6px 12px;
 			font-size: 12px;
 		}
@@ -206,7 +315,8 @@
 		}
 
 		.toggle-button,
-		.reset-button {
+		.reset-button,
+		.present-button {
 			padding: 8px 16px;
 			font-size: 14px;
 		}
