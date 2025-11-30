@@ -124,7 +124,9 @@ function createVSMStore() {
 				if (!state.stream) return state;
 				const updatedStream = {
 					...state.stream,
-					activities: [activity, ...state.stream.activities]
+					// Append to end so when reversed, new activities appear on right (near END)
+					// This supports backward mapping: END → ... → START
+					activities: [...state.stream.activities, activity]
 				};
 				return {
 					...state,
