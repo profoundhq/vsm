@@ -12,7 +12,7 @@ const initialState: VSMState = {
 		{
 			id: '1',
 			role: 'assistant',
-			content: "Welcome to VSM Builder! 🎯\n\nYou can:\n• Use this chat OR click '+ Add Activity' button\n• Switch between multiple streams (top left)\n• Export/import JSON data\n• Export diagrams as PNG/PDF\n• Add Kaizen bursts (improvements)\n• Assign swimlanes (departments)\n• Mark constraints with pulsing animation\n\nLet's start! What stream would you like to map?",
+			content: "Welcome to VSM Builder! 🎯\n\nYour flow shows START 💡 → Activities → END 😀\n\n✨ Map BACKWARDS from the END:\n• Add activities working from customer (END) to supplier (START)\n• Use '+ Add Activity' button or chat\n• Click any activity to add metrics, kaizen bursts, swimlanes\n• Export as PNG/PDF or JSON\n• Mark constraints with pulsing animation\n\nLet's start! What stream would you like to map?",
 			timestamp: Date.now()
 		}
 	],

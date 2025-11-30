@@ -11,13 +11,17 @@
 	} from '@xyflow/svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import VSMNode from './VSMNode.svelte';
+	import StartNode from './StartNode.svelte';
+	import EndNode from './EndNode.svelte';
 	import ActivityEditModal from './ActivityEditModal.svelte';
 	import VSMTimeline from './VSMTimeline.svelte';
 	import type { VSMActivity } from '$lib/types/vsm';
 	import '@xyflow/svelte/dist/style.css';
 
 	const nodeTypes = {
-		vsmActivity: VSMNode
+		vsmActivity: VSMNode,
+		startNode: StartNode,
+		endNode: EndNode
 	};
 
 	let nodes = writable<Node[]>([]);
@@ -28,6 +32,9 @@
 	$: {
 		if ($vsmStore.stream) {
 			updateFlowFromActivities($vsmStore.stream.activities);
+		} else {
+			// Show empty flow with just start and end
+			updateFlowFromActivities([]);
 		}
 	}
 
@@ -40,27 +47,76 @@
 		// Activities are stored in reverse order [end, ..., start]
 		const visualOrder = [...activities].reverse();
 
-		// Create nodes with position indicators
-		const newNodes: Node[] = visualOrder.map((activity, index) => ({
-			id: activity.id,
-			type: 'vsmActivity',
-			position: { x: startX + index * spacing, y: startY },
-			data: {
-				...activity,
-				isStart: index === 0, // Leftmost = start (💡)
-				isEnd: index === visualOrder.length - 1 // Rightmost = end (😀)
+		// Always create START node (leftmost)
+		const newNodes: Node[] = [
+			{
+				id: 'start-node',
+				type: 'startNode',
+				position: { x: startX, y: startY },
+				data: {},
+				draggable: false
 			}
-		}));
+		];
 
-		// Create edges connecting activities (left to right flow, start to end)
+		// Add activity nodes in the middle
+		visualOrder.forEach((activity, index) => {
+			newNodes.push({
+				id: activity.id,
+				type: 'vsmActivity',
+				position: { x: startX + (index + 1) * spacing, y: startY },
+				data: activity
+			});
+		});
+
+		// Always create END node (rightmost)
+		newNodes.push({
+			id: 'end-node',
+			type: 'endNode',
+			position: { x: startX + (visualOrder.length + 1) * spacing, y: startY },
+			data: {},
+			draggable: false
+		});
+
+		// Create edges: START → activities → END
 		const newEdges: Edge[] = [];
-		for (let i = 0; i < visualOrder.length - 1; i++) {
+
+		// Connect START to first activity or END
+		if (visualOrder.length > 0) {
 			newEdges.push({
-				id: `e${visualOrder[i].id}-${visualOrder[i + 1].id}`,
-				source: visualOrder[i].id, // Current activity
-				target: visualOrder[i + 1].id, // Next activity
+				id: 'e-start-first',
+				source: 'start-node',
+				target: visualOrder[0].id,
 				animated: true,
 				style: 'stroke: #4a90e2; stroke-width: 2;'
+			});
+
+			// Connect activities to each other
+			for (let i = 0; i < visualOrder.length - 1; i++) {
+				newEdges.push({
+					id: `e${visualOrder[i].id}-${visualOrder[i + 1].id}`,
+					source: visualOrder[i].id,
+					target: visualOrder[i + 1].id,
+					animated: true,
+					style: 'stroke: #4a90e2; stroke-width: 2;'
+				});
+			}
+
+			// Connect last activity to END
+			newEdges.push({
+				id: 'e-last-end',
+				source: visualOrder[visualOrder.length - 1].id,
+				target: 'end-node',
+				animated: true,
+				style: 'stroke: #4a90e2; stroke-width: 2;'
+			});
+		} else {
+			// No activities, connect START directly to END with dashed line
+			newEdges.push({
+				id: 'e-start-end',
+				source: 'start-node',
+				target: 'end-node',
+				animated: true,
+				style: 'stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 5;'
 			});
 		}
 
@@ -70,7 +126,10 @@
 
 	function handleNodeClick(event: CustomEvent) {
 		const { node } = event.detail;
-		editingActivity = node.data;
+		// Only allow editing activity nodes, not start/end nodes
+		if (node.type === 'vsmActivity') {
+			editingActivity = node.data;
+		}
 	}
 
 	function closeModal() {
@@ -92,10 +151,15 @@
 			<MiniMap />
 		</SvelteFlow>
 
-		{#if !$vsmStore.stream || $vsmStore.stream.activities.length === 0}
+		{#if !$vsmStore.stream}
 			<div class="empty-state">
-				<h2>No activities yet</h2>
-				<p>Click "+ Add Activity" above or use the chat below to start building your value stream map</p>
+				<h2>Create a value stream</h2>
+				<p>Use the chat below or the stream selector to create your first value stream map</p>
+			</div>
+		{:else if $vsmStore.stream.activities.length === 0}
+			<div class="empty-state">
+				<h2>Add activities between START and END</h2>
+				<p>Click "+ Add Activity" to map your process from end to start 🔙</p>
 			</div>
 		{/if}
 	</div>
@@ -151,6 +215,11 @@
 
 	:global(.svelte-flow__node) {
 		cursor: pointer;
+	}
+
+	:global(.svelte-flow__node.startNode),
+	:global(.svelte-flow__node.endNode) {
+		cursor: default;
 	}
 
 	:global(.svelte-flow__edge-path) {
