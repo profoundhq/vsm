@@ -12,6 +12,7 @@
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import VSMNode from './VSMNode.svelte';
 	import ActivityEditModal from './ActivityEditModal.svelte';
+	import VSMTimeline from './VSMTimeline.svelte';
 	import type { VSMActivity } from '$lib/types/vsm';
 	import '@xyflow/svelte/dist/style.css';
 
@@ -77,25 +78,29 @@
 	}
 </script>
 
-<div class="flow-container">
-	<SvelteFlow
-		{nodes}
-		{edges}
-		{nodeTypes}
-		fitView
-		on:nodeclick={handleNodeClick}
-	>
-		<Controls />
-		<Background variant={BackgroundVariant.Dots} />
-		<MiniMap />
-	</SvelteFlow>
+<div class="flow-wrapper">
+	<div class="flow-container">
+		<SvelteFlow
+			{nodes}
+			{edges}
+			{nodeTypes}
+			fitView
+			on:nodeclick={handleNodeClick}
+		>
+			<Controls />
+			<Background variant={BackgroundVariant.Dots} />
+			<MiniMap />
+		</SvelteFlow>
 
-	{#if !$vsmStore.stream || $vsmStore.stream.activities.length === 0}
-		<div class="empty-state">
-			<h2>No activities yet</h2>
-			<p>Click "+ Add Activity" above or use the chat below to start building your value stream map</p>
-		</div>
-	{/if}
+		{#if !$vsmStore.stream || $vsmStore.stream.activities.length === 0}
+			<div class="empty-state">
+				<h2>No activities yet</h2>
+				<p>Click "+ Add Activity" above or use the chat below to start building your value stream map</p>
+			</div>
+		{/if}
+	</div>
+
+	<VSMTimeline />
 </div>
 
 {#if editingActivity}
@@ -104,9 +109,17 @@
 
 <style>
 	/* Mobile-first flow design */
-	.flow-container {
+	.flow-wrapper {
 		width: 100%;
 		height: 100%;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+
+	.flow-container {
+		flex: 1;
+		min-height: 0;
 		position: relative;
 		background: #fafafa;
 	}
