@@ -20,14 +20,14 @@
 
 	.emoji-circle {
 		background: #dbeafe;
-		border: 3px solid #22c55e;
+		border: 3px solid #3b82f6;
 		border-radius: 50%;
 		width: 80px;
 		height: 80px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+		box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 	}
 
 	.emoji {
@@ -38,7 +38,7 @@
 	.label {
 		font-size: 12px;
 		font-weight: 700;
-		color: #14532d;
+		color: #1e40af;
 		letter-spacing: 0.05em;
 	}
 

@@ -60,57 +60,65 @@
 <style>
 	/* Mobile-first design */
 	.app-container {
+		width: 100%;
+		max-width: 100vw;
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		background: var(--color-bg-1);
+		overflow-x: hidden;
 	}
 
 	.app-header {
 		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 		color: white;
-		padding: 12px 16px;
+		padding: 8px 12px;
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		flex-shrink: 0;
+		overflow-x: auto;
 	}
 
 	.header-content {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 12px;
+		flex-direction: column;
+		gap: 8px;
+		min-width: 0;
+	}
+
+	.title-section {
+		min-width: 0;
 	}
 
 	.title-section h1 {
 		margin: 0;
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: 700;
 	}
 
 	.subtitle {
-		margin: 2px 0 0 0;
-		font-size: 11px;
-		opacity: 0.9;
+		display: none;
 	}
 
 	.header-actions {
 		display: flex;
-		gap: 8px;
-		flex-shrink: 0;
+		gap: 6px;
+		flex-wrap: wrap;
+		width: 100%;
 	}
 
 	.toggle-button,
 	.reset-button {
-		padding: 6px 12px;
+		padding: 6px 10px;
 		background: rgba(255, 255, 255, 0.2);
 		border: 1px solid rgba(255, 255, 255, 0.3);
 		color: white;
 		border-radius: 6px;
 		cursor: pointer;
 		font-weight: 600;
-		font-size: 12px;
+		font-size: 11px;
 		transition: background 0.2s;
 		white-space: nowrap;
+		flex-shrink: 0;
 	}
 
 	.toggle-button:hover,
@@ -141,8 +149,50 @@
 		overflow: hidden;
 	}
 
-	/* Desktop/tablet styles */
+	/* Tablet styles */
+	@media (min-width: 640px) {
+		.header-content {
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.subtitle {
+			display: block;
+			margin: 2px 0 0 0;
+			font-size: 11px;
+			opacity: 0.9;
+		}
+
+		.header-actions {
+			flex-wrap: nowrap;
+			width: auto;
+		}
+	}
+
+	/* Desktop styles */
 	@media (min-width: 768px) {
+		.app-header {
+			padding: 12px 16px;
+		}
+
+		.title-section h1 {
+			font-size: 20px;
+		}
+
+		.subtitle {
+			font-size: 13px;
+		}
+
+		.toggle-button,
+		.reset-button {
+			padding: 6px 12px;
+			font-size: 12px;
+		}
+	}
+
+	@media (min-width: 1024px) {
 		.app-header {
 			padding: 16px 24px;
 		}
