@@ -285,7 +285,7 @@
 		padding: 8px 12px;
 		border: 1px solid #d1d5db;
 		border-radius: 6px;
-		font-size: 0.875rem;
+		font-size: 1rem;
 		margin-bottom: 12px;
 	}
 

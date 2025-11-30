@@ -266,7 +266,7 @@
 		padding: 8px 10px;
 		border: 1px solid var(--color-border);
 		border-radius: 8px;
-		font-size: 14px;
+		font-size: 16px;
 		min-width: 0;
 	}
 

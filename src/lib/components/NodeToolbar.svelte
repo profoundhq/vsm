@@ -96,7 +96,7 @@
 		padding: 8px 12px;
 		border: 1px solid var(--color-border);
 		border-radius: 6px;
-		font-size: 14px;
+		font-size: 16px;
 		max-width: 300px;
 	}
 
@@ -168,7 +168,7 @@
 		}
 
 		.activity-input {
-			font-size: 13px;
+			font-size: 16px;
 			padding: 6px 10px;
 		}
 
