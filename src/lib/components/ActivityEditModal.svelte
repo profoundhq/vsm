@@ -11,6 +11,10 @@
 	let value = activity.dimensions?.value?.toString() || '';
 	let defectRate = activity.dimensions?.defectRate?.toString() || '';
 	let changeoverTime = activity.dimensions?.changeoverTime?.toString() || '';
+	let completeAccurate = activity.metrics?.completeAccurate?.toString() || '';
+	let uptime = activity.metrics?.uptime?.toString() || '';
+	let operators = activity.metrics?.operators?.toString() || '';
+	let batchSize = activity.metrics?.batchSize?.toString() || '';
 	let isConstraint = activity.isConstraint || false;
 
 	function handleSave() {
@@ -22,6 +26,12 @@
 				value: value ? parseInt(value) : undefined,
 				defectRate: defectRate ? parseInt(defectRate) : undefined,
 				changeoverTime: changeoverTime ? parseInt(changeoverTime) : undefined
+			},
+			metrics: {
+				completeAccurate: completeAccurate ? parseInt(completeAccurate) : undefined,
+				uptime: uptime ? parseInt(uptime) : undefined,
+				operators: operators ? parseInt(operators) : undefined,
+				batchSize: batchSize ? parseInt(batchSize) : undefined
 			},
 			isConstraint
 		};
@@ -126,6 +136,57 @@
 						min="0"
 					/>
 				</label>
+			</div>
+
+			<div class="form-section">
+				<h3 class="section-title">VSM Metrics</h3>
+				<div class="form-row">
+					<label class="form-label">
+						%C&A (%)
+						<input
+							type="number"
+							bind:value={completeAccurate}
+							class="form-input"
+							placeholder="0"
+							min="0"
+							max="100"
+							title="% Complete & Accurate"
+						/>
+					</label>
+					<label class="form-label">
+						Uptime (%)
+						<input
+							type="number"
+							bind:value={uptime}
+							class="form-input"
+							placeholder="0"
+							min="0"
+							max="100"
+						/>
+					</label>
+				</div>
+				<div class="form-row">
+					<label class="form-label">
+						Operators
+						<input
+							type="number"
+							bind:value={operators}
+							class="form-input"
+							placeholder="0"
+							min="0"
+						/>
+					</label>
+					<label class="form-label">
+						Batch Size
+						<input
+							type="number"
+							bind:value={batchSize}
+							class="form-input"
+							placeholder="0"
+							min="1"
+						/>
+					</label>
+				</div>
 			</div>
 
 			<div class="form-section">

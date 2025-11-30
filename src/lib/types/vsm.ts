@@ -15,6 +15,12 @@ export interface VSMActivity {
 		defectRate?: number;
 		changeoverTime?: number;
 	};
+	metrics?: {
+		completeAccurate?: number; // % Complete & Accurate
+		uptime?: number; // % Uptime/Availability
+		operators?: number; // Number of operators
+		batchSize?: number; // Batch/lot size
+	};
 	isConstraint?: boolean;
 }
 

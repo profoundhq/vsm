@@ -12,6 +12,21 @@
 		? (activities.reduce((sum, a) => sum + (a.dimensions?.defectRate || 0), 0) / activities.length).toFixed(1)
 		: 0;
 
+	// Calculate VSM metrics
+	$: averageCompleteAccurate = activities.length > 0
+		? (activities.reduce((sum, a) => sum + (a.metrics?.completeAccurate || 0), 0) / activities.length).toFixed(1)
+		: 0;
+	$: averageUptime = activities.length > 0
+		? (activities.reduce((sum, a) => sum + (a.metrics?.uptime || 0), 0) / activities.length).toFixed(1)
+		: 0;
+	$: totalOperators = activities.reduce((sum, a) => sum + (a.metrics?.operators || 0), 0);
+	$: totalBatchSize = activities.reduce((sum, a) => sum + (a.metrics?.batchSize || 0), 0);
+
+	// Calculate Rolled Throughput Yield (RTY) - product of all %C&A values
+	$: rolledThroughputYield = activities.length > 0 && activities.some(a => a.metrics?.completeAccurate)
+		? (activities.reduce((product, a) => product * ((a.metrics?.completeAccurate || 100) / 100), 1) * 100).toFixed(1)
+		: 0;
+
 	// Calculate timeline segments for visualization
 	$: timelineSegments = activities.map(a => ({
 		name: a.name,
@@ -73,7 +88,7 @@
 		<div class="stats-grid">
 			<div class="stat-card">
 				<div class="stat-value">{totalProcessTime}</div>
-				<div class="stat-label">Total Process Time (min)</div>
+				<div class="stat-label">Total Value-Add Time (min)</div>
 			</div>
 
 			<div class="stat-card">
@@ -83,16 +98,51 @@
 
 			<div class="stat-card highlight">
 				<div class="stat-value">{cycleEfficiency}%</div>
-				<div class="stat-label">Cycle Efficiency</div>
+				<div class="stat-label">Process Cycle Efficiency (PCE)</div>
 			</div>
+
+			{#if averageCompleteAccurate > 0}
+				<div class="stat-card highlight">
+					<div class="stat-value">{averageCompleteAccurate}%</div>
+					<div class="stat-label">Avg %C&A</div>
+				</div>
+			{/if}
+
+			{#if rolledThroughputYield > 0}
+				<div class="stat-card">
+					<div class="stat-value">{rolledThroughputYield}%</div>
+					<div class="stat-label">Rolled Throughput Yield</div>
+				</div>
+			{/if}
+
+			{#if averageUptime > 0}
+				<div class="stat-card">
+					<div class="stat-value">{averageUptime}%</div>
+					<div class="stat-label">Avg Uptime</div>
+				</div>
+			{/if}
+
+			{#if totalOperators > 0}
+				<div class="stat-card">
+					<div class="stat-value">{totalOperators}</div>
+					<div class="stat-label">Total Operators</div>
+				</div>
+			{/if}
+
+			{#if totalBatchSize > 0}
+				<div class="stat-card">
+					<div class="stat-value">{totalBatchSize}</div>
+					<div class="stat-label">Total Batch Size</div>
+				</div>
+			{/if}
 
 			<div class="stat-card">
 				<div class="stat-value">{activityCount}</div>
-				<div class="stat-label">Activities</div>
+				<div class="stat-label">Total Activities</div>
 			</div>
 
 			{#if averageDefectRate > 0}
-				<div class="stat-card">
+				<div class="stat-card warning">
 					<div class="stat-value">{averageDefectRate}%</div>
 					<div class="stat-label">Avg Defect Rate</div>
 				</div>
@@ -221,6 +271,11 @@
 	.stat-card.highlight {
 		background: #f0f7ff;
 		border-color: var(--color-primary);
+	}
+
+	.stat-card.warning {
+		background: #fff5f5;
+		border-color: var(--color-constraint);
 	}
 
 	.stat-value {
