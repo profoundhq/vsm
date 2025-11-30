@@ -24,10 +24,13 @@
 		const headers = [
 			'name',
 			'processTime',
+			'processTimeUnit',
 			'leadTime',
+			'leadTimeUnit',
 			'valueAdd',
 			'defectRate',
 			'changeoverTime',
+			'changeoverTimeUnit',
 			'completeAccurate',
 			'uptime',
 			'operators',
@@ -39,10 +42,13 @@
 		const rows = activities.map(a => [
 			a.name,
 			a.processTime || '',
+			a.processTimeUnit || '',
 			a.leadTime || '',
+			a.leadTimeUnit || '',
 			a.dimensions?.value || '',
 			a.dimensions?.defectRate || '',
 			a.dimensions?.changeoverTime || '',
+			a.dimensions?.changeoverTimeUnit || '',
 			a.metrics?.completeAccurate || '',
 			a.metrics?.uptime || '',
 			a.metrics?.operators || '',
@@ -71,7 +77,9 @@
 		const data = activities.map(a => ({
 			name: a.name,
 			processTime: a.processTime,
+			processTimeUnit: a.processTimeUnit,
 			leadTime: a.leadTime,
+			leadTimeUnit: a.leadTimeUnit,
 			dimensions: a.dimensions,
 			metrics: a.metrics,
 			swimlane: a.swimlane,
@@ -103,15 +111,18 @@
 		format = fmt;
 		if (fmt === 'csv') {
 			// Generate CSV content for editing
-			const headers = 'name,processTime,leadTime,valueAdd,defectRate,changeoverTime,completeAccurate,uptime,operators,batchSize,swimlane,isConstraint';
+			const headers = 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,valueAdd,defectRate,changeoverTime,changeoverTimeUnit,completeAccurate,uptime,operators,batchSize,swimlane,isConstraint';
 			const rows = activities.map(a =>
 				[
 					a.name,
 					a.processTime || '',
+					a.processTimeUnit || '',
 					a.leadTime || '',
+					a.leadTimeUnit || '',
 					a.dimensions?.value || '',
 					a.dimensions?.defectRate || '',
 					a.dimensions?.changeoverTime || '',
+					a.dimensions?.changeoverTimeUnit || '',
 					a.metrics?.completeAccurate || '',
 					a.metrics?.uptime || '',
 					a.metrics?.operators || '',
@@ -126,7 +137,9 @@
 			const data = activities.map(a => ({
 				name: a.name,
 				processTime: a.processTime,
+				processTimeUnit: a.processTimeUnit,
 				leadTime: a.leadTime,
+				leadTimeUnit: a.leadTimeUnit,
 				dimensions: a.dimensions,
 				metrics: a.metrics,
 				swimlane: a.swimlane,
@@ -174,8 +187,18 @@
 					case 'processTime':
 						activity.processTime = parseInt(value);
 						break;
+					case 'processTimeUnit':
+						if (value === 'mins' || value === 'hours' || value === 'days') {
+							activity.processTimeUnit = value;
+						}
+						break;
 					case 'leadTime':
 						activity.leadTime = parseInt(value);
+						break;
+					case 'leadTimeUnit':
+						if (value === 'mins' || value === 'hours' || value === 'days') {
+							activity.leadTimeUnit = value;
+						}
 						break;
 					case 'valueAdd':
 						if (!activity.dimensions) activity.dimensions = {};
@@ -188,6 +211,12 @@
 					case 'changeoverTime':
 						if (!activity.dimensions) activity.dimensions = {};
 						activity.dimensions.changeoverTime = parseInt(value);
+						break;
+					case 'changeoverTimeUnit':
+						if (value === 'mins' || value === 'hours' || value === 'days') {
+							if (!activity.dimensions) activity.dimensions = {};
+							activity.dimensions.changeoverTimeUnit = value;
+						}
 						break;
 					case 'completeAccurate':
 						if (!activity.metrics) activity.metrics = {};
@@ -261,7 +290,9 @@
 				id: '', // Will be set during preview/apply
 				name: item.name,
 				processTime: item.processTime,
+				processTimeUnit: item.processTimeUnit,
 				leadTime: item.leadTime,
+				leadTimeUnit: item.leadTimeUnit,
 				dimensions: item.dimensions,
 				metrics: item.metrics,
 				swimlane: item.swimlane,

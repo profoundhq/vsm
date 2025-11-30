@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { vsmStore } from '$lib/stores/vsmStore';
-	import type { VSMActivity, KaizenBurst } from '$lib/types/vsm';
+	import type { VSMActivity, KaizenBurst, TimeUnit } from '$lib/types/vsm';
 	import MetricTooltip from './MetricTooltip.svelte';
 
 	export let activity: VSMActivity;
@@ -21,10 +21,13 @@
 
 	let name = activity.name;
 	let processTime = activity.processTime?.toString() || '';
+	let processTimeUnit: TimeUnit = activity.processTimeUnit || 'mins';
 	let leadTime = activity.leadTime?.toString() || '';
+	let leadTimeUnit: TimeUnit = activity.leadTimeUnit || 'hours';
 	let value = activity.dimensions?.value?.toString() || '';
 	let defectRate = activity.dimensions?.defectRate?.toString() || '';
 	let changeoverTime = activity.dimensions?.changeoverTime?.toString() || '';
+	let changeoverTimeUnit: TimeUnit = activity.dimensions?.changeoverTimeUnit || 'mins';
 	let completeAccurate = activity.metrics?.completeAccurate?.toString() || '';
 	let uptime = activity.metrics?.uptime?.toString() || '';
 	let operators = activity.metrics?.operators?.toString() || '';
@@ -58,11 +61,14 @@
 		const updates: Partial<VSMActivity> = {
 			name,
 			processTime: processTime ? parseInt(processTime) : undefined,
+			processTimeUnit: processTime ? processTimeUnit : undefined,
 			leadTime: leadTime ? parseInt(leadTime) : undefined,
+			leadTimeUnit: leadTime ? leadTimeUnit : undefined,
 			dimensions: {
 				value: value ? parseInt(value) : undefined,
 				defectRate: defectRate ? parseInt(defectRate) : undefined,
-				changeoverTime: changeoverTime ? parseInt(changeoverTime) : undefined
+				changeoverTime: changeoverTime ? parseInt(changeoverTime) : undefined,
+				changeoverTimeUnit: changeoverTime ? changeoverTimeUnit : undefined
 			},
 			metrics: {
 				completeAccurate: completeAccurate ? parseInt(completeAccurate) : undefined,
@@ -118,29 +124,43 @@
 				<div class="form-row">
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Process Time (min)
+							Process Time
 							<MetricTooltip tip={tooltips.processTime} />
 						</span>
-						<input
-							type="number"
-							bind:value={processTime}
-							class="form-input"
-							placeholder="0"
-							min="0"
-						/>
+						<div class="time-input-group">
+							<input
+								type="number"
+								bind:value={processTime}
+								class="form-input time-value"
+								placeholder="0"
+								min="0"
+							/>
+							<select bind:value={processTimeUnit} class="form-input time-unit">
+								<option value="mins">mins</option>
+								<option value="hours">hours</option>
+								<option value="days">days</option>
+							</select>
+						</div>
 					</label>
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Lead Time (min)
+							Lead Time
 							<MetricTooltip tip={tooltips.leadTime} />
 						</span>
-						<input
-							type="number"
-							bind:value={leadTime}
-							class="form-input"
-							placeholder="0"
-							min="0"
-						/>
+						<div class="time-input-group">
+							<input
+								type="number"
+								bind:value={leadTime}
+								class="form-input time-value"
+								placeholder="0"
+								min="0"
+							/>
+							<select bind:value={leadTimeUnit} class="form-input time-unit">
+								<option value="mins">mins</option>
+								<option value="hours">hours</option>
+								<option value="days">days</option>
+							</select>
+						</div>
 					</label>
 				</div>
 			</div>
@@ -179,16 +199,23 @@
 				</div>
 				<label class="form-label">
 					<span class="label-with-tooltip">
-						Changeover Time (min)
+						Changeover Time
 						<MetricTooltip tip={tooltips.changeoverTime} />
 					</span>
-					<input
-						type="number"
-						bind:value={changeoverTime}
-						class="form-input"
-						placeholder="0"
-						min="0"
-					/>
+					<div class="time-input-group">
+						<input
+							type="number"
+							bind:value={changeoverTime}
+							class="form-input time-value"
+							placeholder="0"
+							min="0"
+						/>
+						<select bind:value={changeoverTimeUnit} class="form-input time-unit">
+							<option value="mins">mins</option>
+							<option value="hours">hours</option>
+							<option value="days">days</option>
+						</select>
+					</div>
 				</label>
 			</div>
 
@@ -602,5 +629,21 @@
 
 	.burst-form {
 		margin-top: 8px;
+	}
+
+	.time-input-group {
+		display: flex;
+		gap: 8px;
+		margin-top: 6px;
+	}
+
+	.time-value {
+		flex: 2;
+		min-width: 0;
+	}
+
+	.time-unit {
+		flex: 1;
+		min-width: 80px;
 	}
 </style>

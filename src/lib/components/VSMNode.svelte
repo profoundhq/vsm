@@ -28,13 +28,13 @@
 			{#if data.processTime !== undefined}
 				<div class="timing-item">
 					<span class="label">Process Time:</span>
-					<span class="value">{data.processTime}min</span>
+					<span class="value">{data.processTime}{data.processTimeUnit || 'mins'}</span>
 				</div>
 			{/if}
 			{#if data.leadTime !== undefined}
 				<div class="timing-item">
 					<span class="label">Lead Time:</span>
-					<span class="value">{data.leadTime}min</span>
+					<span class="value">{data.leadTime}{data.leadTimeUnit || 'hours'}</span>
 				</div>
 			{/if}
 		</div>
@@ -49,7 +49,7 @@
 				<div class="dim-item">Defect Rate: {data.dimensions.defectRate}%</div>
 			{/if}
 			{#if data.dimensions.changeoverTime !== undefined}
-				<div class="dim-item">Changeover: {data.dimensions.changeoverTime}min</div>
+				<div class="dim-item">Changeover: {data.dimensions.changeoverTime}{data.dimensions.changeoverTimeUnit || 'mins'}</div>
 			{/if}
 		</div>
 	{/if}

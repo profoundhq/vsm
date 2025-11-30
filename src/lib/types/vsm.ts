@@ -5,6 +5,8 @@ export type WorkflowStep =
 	| 'add-dimensions'
 	| 'highlight-constraint';
 
+export type TimeUnit = 'mins' | 'hours' | 'days';
+
 export interface KaizenBurst {
 	id: string;
 	description: string;
@@ -15,11 +17,14 @@ export interface VSMActivity {
 	id: string;
 	name: string;
 	processTime?: number;
+	processTimeUnit?: TimeUnit;
 	leadTime?: number;
+	leadTimeUnit?: TimeUnit;
 	dimensions?: {
 		value?: number;
 		defectRate?: number;
 		changeoverTime?: number;
+		changeoverTimeUnit?: TimeUnit;
 	};
 	metrics?: {
 		completeAccurate?: number; // % Complete & Accurate

@@ -4,14 +4,12 @@
 	import VSMFlow from '$lib/components/VSMFlow.svelte';
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
 	import StreamManager from '$lib/components/StreamManager.svelte';
-	import AppMenu from '$lib/components/AppMenu.svelte';
-	import BulkUpdate from '$lib/components/BulkUpdate.svelte';
-	import ExportImport from '$lib/components/ExportImport.svelte';
-	import DiagramExport from '$lib/components/DiagramExport.svelte';
+	import SidebarMenu from '$lib/components/SidebarMenu.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let showChat = true;
 	let presentationMode = false;
+	let showSidebar = false;
 	let appContainer: HTMLElement;
 
 	function handleReset() {
@@ -22,6 +20,14 @@
 
 	function toggleChat() {
 		showChat = !showChat;
+	}
+
+	function toggleSidebar() {
+		showSidebar = !showSidebar;
+	}
+
+	function closeSidebar() {
+		showSidebar = false;
 	}
 
 	async function enterPresentationMode() {
@@ -85,14 +91,14 @@
 				</div>
 				<div class="header-actions">
 					<StreamManager />
-					<BulkUpdate />
-					<ExportImport />
-					<DiagramExport />
-					<AppMenu
-						showChat={showChat}
-						onToggleChat={toggleChat}
-						onReset={handleReset}
-					/>
+					<button class="menu-button" on:click={toggleSidebar}>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="3" y1="6" x2="21" y2="6" />
+							<line x1="3" y1="12" x2="21" y2="12" />
+							<line x1="3" y1="18" x2="21" y2="18" />
+						</svg>
+						Menu
+					</button>
 					<button class="present-button" on:click={enterPresentationMode}>
 						🎯 Present
 					</button>
@@ -121,6 +127,14 @@
 			Exit Presentation (ESC)
 		</button>
 	{/if}
+
+	<SidebarMenu
+		isOpen={showSidebar}
+		showChat={showChat}
+		onToggleChat={toggleChat}
+		onReset={handleReset}
+		onClose={closeSidebar}
+	/>
 </div>
 
 <style>
@@ -172,10 +186,11 @@
 		width: 100%;
 	}
 
+	.menu-button,
 	.present-button {
 		padding: 6px 10px;
-		background: rgba(255, 215, 0, 0.3);
-		border: 1px solid rgba(255, 215, 0, 0.5);
+		background: rgba(255, 255, 255, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.3);
 		color: white;
 		border-radius: 6px;
 		cursor: pointer;
@@ -184,6 +199,19 @@
 		transition: background 0.2s;
 		white-space: nowrap;
 		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.menu-button:hover,
+	.present-button:hover {
+		background: rgba(255, 255, 255, 0.3);
+	}
+
+	.present-button {
+		background: rgba(255, 215, 0, 0.3);
+		border-color: rgba(255, 215, 0, 0.5);
 	}
 
 	.present-button:hover {
@@ -285,6 +313,7 @@
 			font-size: 13px;
 		}
 
+		.menu-button,
 		.present-button {
 			padding: 6px 12px;
 			font-size: 12px;
@@ -304,6 +333,7 @@
 			font-size: 14px;
 		}
 
+		.menu-button,
 		.present-button {
 			padding: 8px 16px;
 			font-size: 14px;
