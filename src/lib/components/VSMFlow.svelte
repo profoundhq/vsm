@@ -35,21 +35,29 @@
 		const startX = 100;
 		const startY = 200;
 
-		// Create nodes - activities are already in reverse order (end to start)
-		const newNodes: Node[] = activities.map((activity, index) => ({
+		// Reverse activities array for visual display (start to end, left to right)
+		// Activities are stored in reverse order [end, ..., start]
+		const visualOrder = [...activities].reverse();
+
+		// Create nodes with position indicators
+		const newNodes: Node[] = visualOrder.map((activity, index) => ({
 			id: activity.id,
 			type: 'vsmActivity',
 			position: { x: startX + index * spacing, y: startY },
-			data: activity
+			data: {
+				...activity,
+				isStart: index === 0, // Leftmost = start (💡)
+				isEnd: index === visualOrder.length - 1 // Rightmost = end (😀)
+			}
 		}));
 
-		// Create edges connecting activities (right to left flow, end to start)
+		// Create edges connecting activities (left to right flow, start to end)
 		const newEdges: Edge[] = [];
-		for (let i = 0; i < activities.length - 1; i++) {
+		for (let i = 0; i < visualOrder.length - 1; i++) {
 			newEdges.push({
-				id: `e${activities[i].id}-${activities[i + 1].id}`,
-				source: activities[i + 1].id, // Previous activity (towards start)
-				target: activities[i].id, // Next activity (towards end)
+				id: `e${visualOrder[i].id}-${visualOrder[i + 1].id}`,
+				source: visualOrder[i].id, // Current activity
+				target: visualOrder[i + 1].id, // Next activity
 				animated: true,
 				style: 'stroke: #4a90e2; stroke-width: 2;'
 			});

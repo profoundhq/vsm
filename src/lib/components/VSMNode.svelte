@@ -3,13 +3,25 @@
 	import type { VSMActivity } from '$lib/types/vsm';
 
 	export let data: VSMActivity;
+	export let isStart = false;
+	export let isEnd = false;
 
 	$: hasTimingData = data.processTime !== undefined || data.leadTime !== undefined;
 	$: hasDimensionsData = data.dimensions && Object.keys(data.dimensions).length > 0;
 </script>
 
-<div class="vsm-node" class:constraint={data.isConstraint}>
+<div class="vsm-node" class:constraint={data.isConstraint} class:start={isStart} class:end={isEnd}>
 	<Handle type="target" position={Position.Left} />
+
+	{#if isStart || isEnd}
+		<div class="position-indicator">
+			{#if isStart}
+				<span class="emoji" title="Start">💡</span>
+			{:else if isEnd}
+				<span class="emoji" title="End">😀</span>
+			{/if}
+		</div>
+	{/if}
 
 	<div class="node-header">
 		<h3>{data.name}</h3>
@@ -64,6 +76,7 @@
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		transition: all 0.2s;
 		touch-action: none;
+		position: relative;
 	}
 
 	.vsm-node:hover,
@@ -74,6 +87,36 @@
 	.vsm-node.constraint {
 		border-color: var(--color-constraint);
 		background: #fff5f5;
+	}
+
+	.vsm-node.start {
+		border-color: #fbbf24;
+		background: #fffbeb;
+	}
+
+	.vsm-node.end {
+		border-color: #22c55e;
+		background: #f0fdf4;
+	}
+
+	.position-indicator {
+		position: absolute;
+		top: -12px;
+		right: -12px;
+		background: white;
+		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		z-index: 10;
+	}
+
+	.emoji {
+		font-size: 20px;
+		line-height: 1;
 	}
 
 	.node-header {
@@ -155,6 +198,15 @@
 			padding: 12px;
 			min-width: 200px;
 			max-width: 280px;
+		}
+
+		.position-indicator {
+			width: 36px;
+			height: 36px;
+		}
+
+		.emoji {
+			font-size: 22px;
 		}
 
 		.node-header h3 {
