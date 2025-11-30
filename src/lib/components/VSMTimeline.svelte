@@ -217,12 +217,12 @@
 		width: 100%;
 		background: #f8f9fa;
 		border: none;
-		padding: 12px 16px;
+		padding: 14px 16px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		cursor: pointer;
-		transition: background 0.2s;
+		transition: all 0.2s;
 		gap: 12px;
 	}
 
@@ -230,36 +230,63 @@
 		background: #f0f1f3;
 	}
 
+	.timeline-container.collapsed .timeline-header {
+		background: #e8eaed;
+		padding: 16px;
+	}
+
+	.timeline-container.collapsed .timeline-header:hover {
+		background: #dfe1e5;
+	}
+
 	.header-left {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 10px;
 		min-width: 0;
+		flex: 1;
 	}
 
 	.expand-icon {
 		flex-shrink: 0;
 		transition: transform 0.2s;
+		width: 20px;
+		height: 20px;
 	}
 
 	.expand-icon.expanded {
 		transform: rotate(180deg);
 	}
 
+	.timeline-container.collapsed .expand-icon {
+		transform: rotate(-90deg);
+	}
+
 	.timeline-header h3 {
 		margin: 0;
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 600;
 		color: #333;
 		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.timeline-container.collapsed .timeline-header h3 {
+		font-size: 16px;
+		font-weight: 700;
 	}
 
 	.header-stats {
-		display: flex;
+		display: none;
 		gap: 12px;
 		font-size: 12px;
 		color: #666;
 		flex-shrink: 0;
+	}
+
+	.timeline-container:not(.collapsed) .header-stats {
+		display: flex;
 	}
 
 	.quick-stat {
