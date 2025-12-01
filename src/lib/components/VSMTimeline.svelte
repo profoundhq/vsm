@@ -283,10 +283,10 @@
 		font-size: 16px !important;
 		font-weight: 700 !important;
 		color: #1a1a1a !important;
-		flex: 1 !important;
-		min-width: 150px !important;
+		flex: 1 1 auto !important;
 		overflow: visible !important;
-		white-space: nowrap !important;
+		white-space: normal !important;
+		text-overflow: clip !important;
 	}
 
 	.header-stats {
