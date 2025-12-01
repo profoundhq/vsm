@@ -267,7 +267,7 @@
 
 	.flow-panel {
 		flex: 1;
-		overflow: hidden;
+		overflow: auto;
 		position: relative;
 		min-height: 0;
 	}
