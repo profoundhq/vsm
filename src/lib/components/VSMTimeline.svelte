@@ -270,11 +270,16 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		min-width: 0;
+		flex: 1;
 	}
 
 	.timeline-container.collapsed .timeline-header h3 {
-		font-size: 16px;
-		font-weight: 700;
+		font-size: 16px !important;
+		font-weight: 700 !important;
+		color: #1a1a1a !important;
+		flex: 1 !important;
+		overflow: visible !important;
 	}
 
 	.header-stats {

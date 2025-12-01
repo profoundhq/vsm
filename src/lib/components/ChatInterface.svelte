@@ -178,6 +178,8 @@
 		position: relative;
 		background: white;
 		border-top: 1px solid var(--color-border);
+		width: 100%;
+		overflow: hidden;
 	}
 
 	.response-banner {
@@ -236,6 +238,8 @@
 		padding: 12px 16px;
 		gap: 8px;
 		align-items: center;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.help-input-field {
@@ -245,6 +249,8 @@
 		border-radius: 8px;
 		font-size: 14px;
 		min-width: 0;
+		max-width: 100%;
+		box-sizing: border-box;
 		transition: border-color 0.2s;
 	}
 
