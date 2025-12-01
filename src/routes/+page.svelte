@@ -156,6 +156,9 @@
 		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
 		color: white;
 		padding: 8px 12px;
+		padding-top: max(8px, env(safe-area-inset-top));
+		padding-left: max(12px, env(safe-area-inset-left));
+		padding-right: max(12px, env(safe-area-inset-right));
 		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 		flex-shrink: 0;
 		overflow-x: auto;
@@ -275,6 +278,7 @@
 	.chat-panel {
 		background: white;
 		flex-shrink: 0;
+		padding-bottom: env(safe-area-inset-bottom);
 	}
 
 	/* Tablet styles */
@@ -303,6 +307,9 @@
 	@media (min-width: 768px) {
 		.app-header {
 			padding: 12px 16px;
+			padding-top: max(12px, env(safe-area-inset-top));
+			padding-left: max(16px, env(safe-area-inset-left));
+			padding-right: max(16px, env(safe-area-inset-right));
 		}
 
 		.title-section h1 {
@@ -323,6 +330,9 @@
 	@media (min-width: 1024px) {
 		.app-header {
 			padding: 16px 24px;
+			padding-top: max(16px, env(safe-area-inset-top));
+			padding-left: max(24px, env(safe-area-inset-left));
+			padding-right: max(24px, env(safe-area-inset-right));
 		}
 
 		.title-section h1 {
