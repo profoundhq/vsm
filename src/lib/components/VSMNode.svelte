@@ -1,12 +1,29 @@
 <script lang="ts">
 	import { Handle, Position } from '@xyflow/svelte';
 	import type { VSMActivity } from '$lib/types/vsm';
+	import { vsmStore } from '$lib/stores/vsmStore';
+	import { uiStore } from '$lib/stores/uiStore';
 
 	export let data: VSMActivity;
 
 	$: hasTimingData = data.processTime !== undefined || data.leadTime !== undefined;
 	$: hasDimensionsData = data.dimensions && Object.keys(data.dimensions).length > 0;
 	$: hasKaizenBursts = data.kaizenBursts && data.kaizenBursts.length > 0;
+
+	function handleMoveLeft(e: MouseEvent) {
+		e.stopPropagation();
+		vsmStore.moveActivityLeft(data.id);
+	}
+
+	function handleMoveRight(e: MouseEvent) {
+		e.stopPropagation();
+		vsmStore.moveActivityRight(data.id);
+	}
+
+	function handleInsertAfter(e: MouseEvent) {
+		e.stopPropagation();
+		uiStore.requestInsertAfter(data.id);
+	}
 </script>
 
 <div class="vsm-node" class:constraint={data.isConstraint}>
@@ -64,6 +81,25 @@
 			{/each}
 		</div>
 	{/if}
+
+	<div class="node-controls">
+		<button class="control-btn" on:click={handleMoveLeft} title="Move left">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="15 18 9 12 15 6"></polyline>
+			</svg>
+		</button>
+		<button class="control-btn insert-btn" on:click={handleInsertAfter} title="Insert activity after">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<line x1="12" y1="5" x2="12" y2="19"></line>
+				<line x1="5" y1="12" x2="19" y2="12"></line>
+			</svg>
+		</button>
+		<button class="control-btn" on:click={handleMoveRight} title="Move right">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="9 18 15 12 9 6"></polyline>
+			</svg>
+		</button>
+	</div>
 
 	<Handle type="source" position={Position.Right} />
 </div>
@@ -226,6 +262,50 @@
 	.burst-text {
 		flex: 1;
 		line-height: 1.3;
+	}
+
+	.node-controls {
+		display: flex;
+		gap: 4px;
+		margin-top: 8px;
+		padding-top: 8px;
+		border-top: 1px solid #e5e7eb;
+		justify-content: center;
+	}
+
+	.control-btn {
+		background: #f3f4f6;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		padding: 4px 6px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.2s;
+		color: #6b7280;
+	}
+
+	.control-btn:hover {
+		background: #e5e7eb;
+		border-color: #9ca3af;
+		color: #374151;
+	}
+
+	.control-btn:active {
+		transform: scale(0.95);
+	}
+
+	.control-btn.insert-btn {
+		background: #dbeafe;
+		border-color: #93c5fd;
+		color: #1e40af;
+	}
+
+	.control-btn.insert-btn:hover {
+		background: #bfdbfe;
+		border-color: #60a5fa;
+		color: #1e3a8a;
 	}
 
 	/* Tablet and desktop */

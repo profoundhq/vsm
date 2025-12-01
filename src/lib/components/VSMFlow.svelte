@@ -9,6 +9,7 @@
 		type Edge
 	} from '@xyflow/svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
+	import { uiStore } from '$lib/stores/uiStore';
 	import VSMNode from './VSMNode.svelte';
 	import StartNode from './StartNode.svelte';
 	import EndNode from './EndNode.svelte';
@@ -26,6 +27,17 @@
 	let nodes = writable<Node[]>([]);
 	let edges = writable<Edge[]>([]);
 	let editingActivity: VSMActivity | null = null;
+	let insertingAfterActivityId: string | null = null;
+
+	// Handle insert requests from nodes
+	$: if ($uiStore.insertingAfterActivityId) {
+		insertingAfterActivityId = $uiStore.insertingAfterActivityId;
+		editingActivity = {
+			id: Date.now().toString(),
+			name: ''
+		};
+		uiStore.clearInsertRequest();
+	}
 
 	// Subscribe to VSM store and update flow nodes
 	$: {
@@ -128,11 +140,13 @@
 		// Only allow editing activity nodes, not start/end nodes
 		if (node.type === 'vsmActivity') {
 			editingActivity = node.data;
+			insertingAfterActivityId = null;
 		}
 	}
 
 	function closeModal() {
 		editingActivity = null;
+		insertingAfterActivityId = null;
 	}
 </script>
 
@@ -166,7 +180,11 @@
 </div>
 
 {#if editingActivity}
-	<ActivityEditModal activity={editingActivity} onClose={closeModal} />
+	<ActivityEditModal
+		activity={editingActivity}
+		onClose={closeModal}
+		insertingAfterActivityId={insertingAfterActivityId}
+	/>
 {/if}
 
 <style>

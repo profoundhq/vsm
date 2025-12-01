@@ -5,6 +5,9 @@
 
 	export let activity: VSMActivity;
 	export let onClose: () => void;
+	export let insertingAfterActivityId: string | null = null;
+
+	$: isInserting = insertingAfterActivityId !== null;
 
 	// Tooltip content for metrics
 	const tooltips = {
@@ -58,7 +61,7 @@
 	}
 
 	function handleSave() {
-		const updates: Partial<VSMActivity> = {
+		const activityData: Partial<VSMActivity> = {
 			name,
 			processTime: processTime ? parseInt(processTime) : undefined,
 			processTimeUnit: processTime ? processTimeUnit : undefined,
@@ -81,7 +84,19 @@
 			kaizenBursts
 		};
 
-		vsmStore.updateActivity(activity.id, updates);
+		if (isInserting && insertingAfterActivityId) {
+			// Create new activity and insert after specified activity
+			const newActivity: VSMActivity = {
+				id: activity.id, // Use the ID that was pre-generated
+				name: name || 'New Activity',
+				...activityData
+			} as VSMActivity;
+			vsmStore.insertActivityAfter(insertingAfterActivityId, newActivity);
+		} else {
+			// Update existing activity
+			vsmStore.updateActivity(activity.id, activityData);
+		}
+
 		onClose();
 	}
 
@@ -102,7 +117,7 @@
 <div class="modal-backdrop" on:click={handleBackdropClick}>
 	<div class="modal-content">
 		<div class="modal-header">
-			<h2>Edit Activity</h2>
+			<h2>{isInserting ? 'Insert Activity' : 'Edit Activity'}</h2>
 			<button class="close-btn" on:click={onClose}>&times;</button>
 		</div>
 
@@ -338,15 +353,17 @@
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-delete" on:click={handleDelete}>
-					Delete
-				</button>
+				{#if !isInserting}
+					<button type="button" class="btn btn-delete" on:click={handleDelete}>
+						Delete
+					</button>
+				{/if}
 				<div class="footer-actions">
 					<button type="button" class="btn btn-secondary" on:click={onClose}>
 						Cancel
 					</button>
 					<button type="submit" class="btn btn-primary">
-						Save
+						{isInserting ? 'Insert' : 'Save'}
 					</button>
 				</div>
 			</div>

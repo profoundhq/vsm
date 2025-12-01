@@ -168,6 +168,68 @@ function createVSMStore() {
 			});
 		},
 
+		// Move activities left/right in the flow
+		// Note: activities array is in reverse order [end, ..., start]
+		// Visual left (toward START) = higher index, Visual right (toward END) = lower index
+		moveActivityLeft: (activityId: string) => {
+			update(state => {
+				if (!state.stream) return state;
+				const currentIndex = state.stream.activities.findIndex(a => a.id === activityId);
+				if (currentIndex === -1 || currentIndex === state.stream.activities.length - 1) return state;
+
+				const activities = [...state.stream.activities];
+				// Swap with next item (visually to the left, toward START)
+				[activities[currentIndex], activities[currentIndex + 1]] =
+					[activities[currentIndex + 1], activities[currentIndex]];
+
+				const updatedStream = { ...state.stream, activities };
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === state.stream?.id ? updatedStream : s)
+				};
+			});
+		},
+
+		moveActivityRight: (activityId: string) => {
+			update(state => {
+				if (!state.stream) return state;
+				const currentIndex = state.stream.activities.findIndex(a => a.id === activityId);
+				if (currentIndex === -1 || currentIndex === 0) return state;
+
+				const activities = [...state.stream.activities];
+				// Swap with previous item (visually to the right, toward END)
+				[activities[currentIndex], activities[currentIndex - 1]] =
+					[activities[currentIndex - 1], activities[currentIndex]];
+
+				const updatedStream = { ...state.stream, activities };
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === state.stream?.id ? updatedStream : s)
+				};
+			});
+		},
+
+		insertActivityAfter: (activityId: string, newActivity: VSMActivity) => {
+			update(state => {
+				if (!state.stream) return state;
+				const currentIndex = state.stream.activities.findIndex(a => a.id === activityId);
+				if (currentIndex === -1) return state;
+
+				const activities = [...state.stream.activities];
+				// Insert before current index (visually after, toward END)
+				activities.splice(currentIndex, 0, newActivity);
+
+				const updatedStream = { ...state.stream, activities };
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === state.stream?.id ? updatedStream : s)
+				};
+			});
+		},
+
 		setConstraint: (activityId: string) => {
 			update(state => {
 				if (!state.stream) return state;
