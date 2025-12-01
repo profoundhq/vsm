@@ -5,7 +5,6 @@
 		Controls,
 		Background,
 		BackgroundVariant,
-		MiniMap,
 		type Node,
 		type Edge
 	} from '@xyflow/svelte';
@@ -148,7 +147,6 @@
 		>
 			<Controls />
 			<Background variant={BackgroundVariant.Dots} />
-			<MiniMap />
 		</SvelteFlow>
 
 		{#if !$vsmStore.stream}
@@ -226,6 +224,11 @@
 		stroke-width: 2;
 	}
 
+	/* Hide Svelte Flow attribution */
+	:global(.svelte-flow__attribution) {
+		display: none !important;
+	}
+
 	/* Mobile-optimized controls */
 	:global(.svelte-flow__controls) {
 		bottom: 10px;
@@ -235,13 +238,6 @@
 	:global(.svelte-flow__controls button) {
 		width: 32px;
 		height: 32px;
-	}
-
-	:global(.svelte-flow__minimap) {
-		bottom: 10px;
-		right: 10px;
-		width: 100px;
-		height: 70px;
 	}
 
 	/* Tablet and desktop */
@@ -262,13 +258,6 @@
 		:global(.svelte-flow__controls button) {
 			width: 40px;
 			height: 40px;
-		}
-
-		:global(.svelte-flow__minimap) {
-			bottom: 20px;
-			right: 20px;
-			width: 150px;
-			height: 100px;
 		}
 	}
 </style>
