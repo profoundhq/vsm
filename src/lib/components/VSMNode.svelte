@@ -9,6 +9,7 @@
 	$: hasTimingData = data.processTime !== undefined || data.leadTime !== undefined;
 	$: hasDimensionsData = data.dimensions && Object.keys(data.dimensions).length > 0;
 	$: hasKaizenBursts = data.kaizenBursts && data.kaizenBursts.length > 0;
+	$: editModeEnabled = $uiStore.editModeEnabled;
 
 	function handleMoveLeft(e: MouseEvent) {
 		e.stopPropagation();
@@ -82,24 +83,26 @@
 		</div>
 	{/if}
 
-	<div class="node-controls">
-		<button class="control-btn" on:click={handleMoveLeft} title="Move left">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<polyline points="15 18 9 12 15 6"></polyline>
-			</svg>
-		</button>
-		<button class="control-btn insert-btn" on:click={handleInsertAfter} title="Insert activity after">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<line x1="12" y1="5" x2="12" y2="19"></line>
-				<line x1="5" y1="12" x2="19" y2="12"></line>
-			</svg>
-		</button>
-		<button class="control-btn" on:click={handleMoveRight} title="Move right">
-			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-				<polyline points="9 18 15 12 9 6"></polyline>
-			</svg>
-		</button>
-	</div>
+	{#if editModeEnabled}
+		<div class="node-controls">
+			<button class="control-btn" on:click={handleMoveLeft} title="Move left">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="15 18 9 12 15 6"></polyline>
+				</svg>
+			</button>
+			<button class="control-btn insert-btn" on:click={handleInsertAfter} title="Insert activity after">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<line x1="12" y1="5" x2="12" y2="19"></line>
+					<line x1="5" y1="12" x2="19" y2="12"></line>
+				</svg>
+			</button>
+			<button class="control-btn" on:click={handleMoveRight} title="Move right">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="9 18 15 12 9 6"></polyline>
+				</svg>
+			</button>
+		</div>
+	{/if}
 
 	<Handle type="source" position={Position.Right} />
 </div>

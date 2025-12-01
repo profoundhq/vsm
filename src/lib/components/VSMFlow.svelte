@@ -161,6 +161,21 @@
 		>
 			<Controls />
 			<Background variant={BackgroundVariant.Dots} />
+
+			<!-- Custom Edit Mode Toggle -->
+			<div class="edit-mode-toggle">
+				<button
+					class="edit-mode-btn"
+					class:active={$uiStore.editModeEnabled}
+					on:click={() => uiStore.toggleEditMode()}
+					title={$uiStore.editModeEnabled ? 'Disable edit mode' : 'Enable edit mode'}
+				>
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+						<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+					</svg>
+				</button>
+			</div>
 		</SvelteFlow>
 
 		{#if !$vsmStore.stream}
@@ -258,6 +273,50 @@
 		height: 32px;
 	}
 
+	/* Edit mode toggle button */
+	.edit-mode-toggle {
+		position: absolute;
+		bottom: 10px;
+		left: 10px;
+		z-index: 5;
+		pointer-events: none;
+	}
+
+	.edit-mode-btn {
+		pointer-events: all;
+		background: white;
+		border: 1px solid #d1d5db;
+		border-radius: 4px;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.2s;
+		color: #6b7280;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		margin-bottom: 4px;
+	}
+
+	.edit-mode-btn:hover {
+		background: #f3f4f6;
+		border-color: #9ca3af;
+		color: #374151;
+	}
+
+	.edit-mode-btn.active {
+		background: #3b82f6;
+		border-color: #2563eb;
+		color: white;
+		box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+	}
+
+	.edit-mode-btn.active:hover {
+		background: #2563eb;
+		border-color: #1d4ed8;
+	}
+
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
 		.empty-state h2 {
@@ -276,6 +335,22 @@
 		:global(.svelte-flow__controls button) {
 			width: 40px;
 			height: 40px;
+		}
+
+		.edit-mode-toggle {
+			bottom: 20px;
+			left: 20px;
+		}
+
+		.edit-mode-btn {
+			width: 40px;
+			height: 40px;
+			margin-bottom: 6px;
+		}
+
+		.edit-mode-btn svg {
+			width: 24px;
+			height: 24px;
 		}
 	}
 </style>

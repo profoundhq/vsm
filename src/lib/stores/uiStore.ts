@@ -2,10 +2,12 @@ import { writable } from 'svelte/store';
 
 interface UIState {
 	insertingAfterActivityId: string | null;
+	editModeEnabled: boolean;
 }
 
 const initialState: UIState = {
-	insertingAfterActivityId: null
+	insertingAfterActivityId: null,
+	editModeEnabled: false
 };
 
 function createUIStore() {
@@ -25,6 +27,20 @@ function createUIStore() {
 			update(state => ({
 				...state,
 				insertingAfterActivityId: null
+			}));
+		},
+
+		toggleEditMode: () => {
+			update(state => ({
+				...state,
+				editModeEnabled: !state.editModeEnabled
+			}));
+		},
+
+		setEditMode: (enabled: boolean) => {
+			update(state => ({
+				...state,
+				editModeEnabled: enabled
 			}));
 		}
 	};
