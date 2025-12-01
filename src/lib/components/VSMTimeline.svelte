@@ -247,6 +247,11 @@
 		flex: 1;
 	}
 
+	.timeline-container.collapsed .header-left {
+		flex: 1;
+		min-width: 0;
+	}
+
 	.expand-icon {
 		flex-shrink: 0;
 		transition: transform 0.2s;
@@ -279,7 +284,9 @@
 		font-weight: 700 !important;
 		color: #1a1a1a !important;
 		flex: 1 !important;
+		min-width: 150px !important;
 		overflow: visible !important;
+		white-space: nowrap !important;
 	}
 
 	.header-stats {
