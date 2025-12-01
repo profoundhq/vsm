@@ -173,7 +173,7 @@
 		max-width: 320px;
 		max-height: 400px;
 		overflow-y: auto;
-		z-index: 100;
+		z-index: 1001;
 	}
 
 	.menu-section {
