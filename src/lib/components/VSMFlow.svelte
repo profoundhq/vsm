@@ -159,7 +159,7 @@
 			fitView
 			on:nodeclick={handleNodeClick}
 		>
-			<Controls>
+			<Controls showInteractive={false}>
 				<button
 					class="edit-mode-btn"
 					class:active={$uiStore.editModeEnabled}
