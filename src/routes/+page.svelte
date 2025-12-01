@@ -274,10 +274,7 @@
 
 	.chat-panel {
 		background: white;
-		border-top: 2px solid var(--color-border);
-		height: 280px;
 		flex-shrink: 0;
-		overflow: hidden;
 	}
 
 	/* Tablet styles */
@@ -340,16 +337,6 @@
 		.present-button {
 			padding: 8px 16px;
 			font-size: 14px;
-		}
-
-		.chat-panel {
-			height: 320px;
-		}
-	}
-
-	@media (min-width: 1024px) {
-		.chat-panel {
-			height: 350px;
 		}
 	}
 </style>
