@@ -69,7 +69,7 @@
 </script>
 
 <svelte:head>
-	<title>VSM Builder - Value Stream Mapping Tool</title>
+	<title>Throughline - Value Stream Mapping Tool</title>
 </svelte:head>
 
 <svelte:window on:keydown={handleKeydown} />
@@ -79,7 +79,7 @@
 		<header class="app-header">
 			<div class="header-content">
 				<div class="title-section">
-					<h1>VSM Builder</h1>
+					<h1>Throughline</h1>
 					<p class="subtitle">Build your value stream map backwards from the end</p>
 				</div>
 				<div class="header-actions">

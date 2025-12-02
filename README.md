@@ -1,24 +1,23 @@
-# VSM Builder
+# Throughline
 
 A Value Stream Mapping application built with SvelteKit and Svelte Flow that helps you create value stream maps working backwards from the end.
 
 ## Features
 
 - 📊 **Interactive Flow Diagram** - Visualize your value stream with Svelte Flow
-- 💬 **Chat-Based Interface** - Build your VSM through conversational prompts
 - ⏪ **Backward Mapping** - Start from the end and work backwards through your process
 - ⚡ **Real-time Updates** - See your map update as you add information
 - 📏 **Complete VSM Data** - Track timing, dimensions, and constraints
+- 📤 **Export Options** - Export as CSV, YAML, PNG, or PDF
 
-## Workflow Steps
+## Workflow
 
-The application guides you through 5 key steps:
-
-1. **Stream Selection** - Define what value stream you want to map
-2. **Add Activities** - Add activities working backwards from the final step
-3. **Add Timing** - Include process time and lead time for each activity
-4. **Add Dimensions** - Add value-add percentage, defect rates, and changeover times
-5. **Highlight Constraint** - Identify the bottleneck in your process
+1. **Create or Select Stream** - Use the stream selector or "+ Add Stream" button to create/switch between value streams
+2. **Add Activities** - Click "+ Add Activity" to add activities working backwards from the final step
+3. **Edit Activity Details** - Click any activity node to add timing, dimensions, and metrics
+4. **Rearrange Flow** - Use edit mode to reorder activities or insert new ones between existing steps
+5. **Mark Constraints** - Identify bottlenecks in your activity details
+6. **Export** - Save your VSM as CSV, YAML, PNG, or PDF
 
 ## Installation
 
@@ -88,45 +87,32 @@ For detailed testing instructions, see [TESTING.md](./TESTING.md)
 
 ## Usage
 
-### Chat Commands
+### Creating Your Value Stream Map
 
-#### Step 1: Stream Selection
-Simply type the name of your stream:
-```
-Customer Order Fulfillment
-```
+1. **Create a Stream**
+   - Click "+ Add Stream" button in the toolbar
+   - Enter a stream name (e.g., "Customer Order Fulfillment")
 
-#### Step 2: Add Activities
-Add activities one at a time, starting from the END:
-```
-Delivery to Customer
-Package Order
-Pick Items
-Process Payment
-```
-Type `done` when finished.
+2. **Add Activities** (Work backwards from the end)
+   - Click "+ Add Activity" button
+   - Enter activity name (e.g., "Delivery to Customer")
+   - Continue adding activities in reverse order
 
-#### Step 3: Add Timing
-Add timing data for each activity:
-```
-activity Delivery process 30 lead 120
-activity Package process 15 lead 30
-```
-Type `done` when finished.
+3. **Add Details to Activities**
+   - Click any activity node to open the edit modal
+   - Add timing data: Process time and lead time
+   - Add dimensions: Value-add %, defect rate, changeover time
+   - Add metrics: Complete/accurate %, uptime %, operators, batch size
+   - Mark as constraint if it's a bottleneck
 
-#### Step 4: Add Dimensions
-Add quality and efficiency metrics:
-```
-activity Delivery value 90 defect 2 changeover 10
-activity Package value 85 defect 5 changeover 5
-```
-Type `done` when finished.
+4. **Rearrange Activities**
+   - Click the pencil icon in the flow controls to enable edit mode
+   - Use arrow buttons to move activities left or right
+   - Use + button to insert new activities between existing ones
 
-#### Step 5: Highlight Constraint
-Identify the bottleneck:
-```
-Package Order
-```
+5. **Export Your Map**
+   - Open the menu (hamburger icon)
+   - Choose from CSV, YAML, PNG, or PDF export options
 
 ## Project Structure
 
@@ -134,18 +120,23 @@ Package Order
 src/
 ├── lib/
 │   ├── components/
-│   │   ├── ChatInterface.svelte   # Chat UI and workflow logic
-│   │   ├── VSMFlow.svelte          # Svelte Flow integration
-│   │   └── VSMNode.svelte          # Custom node component
+│   │   ├── VSMFlow.svelte           # Svelte Flow integration
+│   │   ├── VSMNode.svelte           # Custom node component
+│   │   ├── NodeToolbar.svelte       # Stream/activity creation toolbar
+│   │   ├── StreamManager.svelte     # Stream selector dropdown
+│   │   ├── ActivityEditModal.svelte # Activity details editor
+│   │   ├── SidebarMenu.svelte       # Main menu sidebar
+│   │   └── ...                      # Export/import components
 │   ├── stores/
-│   │   └── vsmStore.ts             # State management
+│   │   ├── vsmStore.ts              # VSM data state management
+│   │   └── uiStore.ts               # UI state management
 │   └── types/
-│       └── vsm.ts                  # TypeScript types
+│       └── vsm.ts                   # TypeScript types
 ├── routes/
-│   ├── +layout.svelte              # Root layout
-│   └── +page.svelte                # Main application page
-├── app.html                        # HTML template
-└── app.css                         # Global styles
+│   ├── +layout.svelte               # Root layout
+│   └── +page.svelte                 # Main application page
+├── app.html                         # HTML template
+└── app.css                          # Global styles
 ```
 
 ## Technologies
