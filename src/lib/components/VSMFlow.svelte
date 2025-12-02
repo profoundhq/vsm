@@ -5,6 +5,7 @@
 		Controls,
 		Background,
 		BackgroundVariant,
+		Panel,
 		type Node,
 		type Edge
 	} from '@xyflow/svelte';
@@ -14,6 +15,7 @@
 	import StartNode from './StartNode.svelte';
 	import EndNode from './EndNode.svelte';
 	import ActivityEditModal from './ActivityEditModal.svelte';
+	import VSMTimeline from './VSMTimeline.svelte';
 	import type { VSMActivity } from '$lib/types/vsm';
 	import '@xyflow/svelte/dist/style.css';
 
@@ -211,6 +213,10 @@
 					</button>
 				</Controls>
 				<Background variant={BackgroundVariant.Dots} />
+
+				<Panel position="bottom">
+					<VSMTimeline mode="ladder" />
+				</Panel>
 			</SvelteFlow>
 
 			{#if $vsmStore.stream.activities.length === 0}
@@ -415,6 +421,23 @@
 	:global(.svelte-flow__controls) .edit-mode-btn.active:hover {
 		background: #2563eb;
 		border-color: #2563eb;
+	}
+
+	/* Timeline Panel Styling */
+	:global(.svelte-flow__panel.bottom) {
+		display: flex;
+		justify-content: stretch;
+		align-items: flex-end;
+		padding: 0;
+		pointer-events: none;
+		width: 100%;
+		left: 0;
+		right: 0;
+	}
+
+	:global(.svelte-flow__panel.bottom > *) {
+		pointer-events: auto;
+		width: 100%;
 	}
 
 	/* Tablet and desktop */

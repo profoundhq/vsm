@@ -2,6 +2,8 @@
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import type { TimeUnit } from '$lib/types/vsm';
 
+	export let mode: 'stats' | 'ladder' | 'both' = 'both';
+
 	let isExpanded = true;
 
 	// Match the spacing and positioning from VSMFlow.svelte
@@ -92,21 +94,22 @@
 </script>
 
 {#if hasData && activities.length > 0}
-	<div class="timeline-container" class:collapsed={!isExpanded}>
-		<button class="timeline-header" on:click={toggleExpanded}>
-			<div class="header-left">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expand-icon" class:expanded={isExpanded}>
-					<polyline points="6 9 12 15 18 9" />
-				</svg>
-				<h3>Timeline & Statistics</h3>
-			</div>
-			<div class="header-stats">
-				<span class="quick-stat">PCE: <strong>{cycleEfficiency}%</strong></span>
-				<span class="quick-stat">{totalLeadTime.value}{totalLeadTime.unit} total</span>
-			</div>
-		</button>
+	{#if mode === 'stats' || mode === 'both'}
+		<div class="timeline-container" class:collapsed={!isExpanded}>
+			<button class="timeline-header" on:click={toggleExpanded}>
+				<div class="header-left">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expand-icon" class:expanded={isExpanded}>
+						<polyline points="6 9 12 15 18 9" />
+					</svg>
+					<h3>Timeline & Statistics</h3>
+				</div>
+				<div class="header-stats">
+					<span class="quick-stat">PCE: <strong>{cycleEfficiency}%</strong></span>
+					<span class="quick-stat">{totalLeadTime.value}{totalLeadTime.unit} total</span>
+				</div>
+			</button>
 
-		{#if isExpanded}
+			{#if isExpanded}
 			<!-- Summary Statistics -->
 			<div class="stats-grid">
 				<div class="stat-card highlight">
@@ -167,9 +170,13 @@
 					</div>
 				{/if}
 			</div>
+			{/if}
+		</div>
+	{/if}
 
-			<!-- Visual Timeline - Lead Time Ladder -->
-			<div class="timeline-visual">
+	{#if mode === 'ladder' || mode === 'both'}
+		<!-- Visual Timeline - Lead Time Ladder -->
+		<div class="timeline-visual" class:standalone={mode === 'ladder'}>
 				<div class="timeline-title">Lead Time Ladder</div>
 				<div class="ladder-info">
 					<div class="ladder-summary">
@@ -202,8 +209,7 @@
 					{/each}
 				</div>
 			</div>
-		{/if}
-	</div>
+	{/if}
 {/if}
 
 <style>
@@ -416,6 +422,12 @@
 		background: white;
 		border-top: 2px solid var(--color-british-blue);
 		overflow-x: auto;
+	}
+
+	.timeline-visual.standalone {
+		border-top: none;
+		border-top: 3px solid var(--color-british-blue);
+		background: rgba(255, 255, 255, 0.98);
 	}
 
 	.timeline-title {

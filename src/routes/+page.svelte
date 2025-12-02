@@ -116,7 +116,7 @@
 				<VSMFlow />
 			</div>
 		</main>
-		<VSMTimeline />
+		<VSMTimeline mode="stats" />
 	</div>
 
 	{#if presentationMode}
