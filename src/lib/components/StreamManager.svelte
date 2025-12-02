@@ -4,6 +4,8 @@
 	let showMenu = false;
 	let newStreamName = '';
 	let showNewStreamForm = false;
+	let buttonElement: HTMLButtonElement;
+	let menuPosition = { top: 0, left: 0 };
 
 	$: streams = $vsmStore.streams;
 	$: currentStreamId = $vsmStore.currentStreamId;
@@ -11,6 +13,13 @@
 
 	function toggleMenu() {
 		showMenu = !showMenu;
+		if (showMenu && buttonElement) {
+			const rect = buttonElement.getBoundingClientRect();
+			menuPosition = {
+				top: rect.bottom + 8,
+				left: rect.left
+			};
+		}
 	}
 
 	function closeMenu() {
@@ -54,7 +63,12 @@
 <svelte:window on:click={closeMenu} />
 
 <div class="stream-manager">
-	<button class="stream-button" on:click|stopPropagation={toggleMenu} aria-label="Stream selector">
+	<button
+		bind:this={buttonElement}
+		class="stream-button"
+		on:click|stopPropagation={toggleMenu}
+		aria-label="Stream selector"
+	>
 		<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 			<path d="M3 3h7v7H3z" />
 			<path d="M14 3h7v7h-7z" />
@@ -66,9 +80,14 @@
 			<polyline points="6 9 12 15 18 9" />
 		</svg>
 	</button>
+</div>
 
-	{#if showMenu}
-		<div class="menu" on:click|stopPropagation>
+{#if showMenu}
+	<div
+		class="menu"
+		on:click|stopPropagation
+		style="top: {menuPosition.top}px; left: {menuPosition.left}px;"
+	>
 			{#if !showNewStreamForm}
 				<div class="menu-section">
 					<div class="section-header">Streams ({streams.length})</div>
@@ -119,9 +138,8 @@
 					</div>
 				</div>
 			{/if}
-		</div>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style>
 	.stream-manager {
@@ -162,9 +180,7 @@
 	}
 
 	.menu {
-		position: absolute;
-		top: calc(100% + 8px);
-		left: 0;
+		position: fixed;
 		background: white;
 		border: 1px solid #e5e7eb;
 		border-radius: 8px;
@@ -173,7 +189,7 @@
 		max-width: 320px;
 		max-height: 400px;
 		overflow-y: auto;
-		z-index: 1001;
+		z-index: 9999;
 	}
 
 	.menu-section {
