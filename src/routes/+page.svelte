@@ -4,6 +4,7 @@
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
 	import StreamManager from '$lib/components/StreamManager.svelte';
 	import SidebarMenu from '$lib/components/SidebarMenu.svelte';
+	import VSMTimeline from '$lib/components/VSMTimeline.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
 	let presentationMode = false;
@@ -115,6 +116,7 @@
 				<VSMFlow />
 			</div>
 		</main>
+		<VSMTimeline />
 	</div>
 
 	{#if presentationMode}
