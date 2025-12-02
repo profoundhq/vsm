@@ -18,20 +18,59 @@
 		closeMenu();
 
 		try {
-			const flowWrapper = document.querySelector('.flow-wrapper') as HTMLElement;
-			if (!flowWrapper) {
+			// Get the viewport element which contains all nodes
+			const viewport = document.querySelector('.svelte-flow__viewport') as HTMLElement;
+			if (!viewport) {
 				alert('Flow diagram not found');
 				return;
 			}
 
-			const canvas = await html2canvas(flowWrapper, {
-				backgroundColor: '#f5f5f5',
-				scale: 2,
-				logging: false
+			// Get all nodes to ensure they're in view
+			const nodes = document.querySelectorAll('.svelte-flow__node');
+			if (nodes.length === 0) {
+				alert('No activities to export. Please add some activities first.');
+				return;
+			}
+
+			// Calculate the bounding box of all nodes
+			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+			nodes.forEach((node) => {
+				const rect = node.getBoundingClientRect();
+				const viewportRect = viewport.getBoundingClientRect();
+
+				// Convert to viewport coordinates
+				const x = rect.left - viewportRect.left;
+				const y = rect.top - viewportRect.top;
+
+				minX = Math.min(minX, x);
+				minY = Math.min(minY, y);
+				maxX = Math.max(maxX, x + rect.width);
+				maxY = Math.max(maxY, y + rect.height);
+			});
+
+			// Add padding
+			const padding = 100;
+			minX -= padding;
+			minY -= padding;
+			maxX += padding;
+			maxY += padding;
+
+			const width = maxX - minX;
+			const height = maxY - minY;
+
+			// Capture the viewport with high resolution
+			const canvas = await html2canvas(viewport, {
+				backgroundColor: '#FFF8DC', // British Rail cream
+				scale: 2, // High resolution
+				logging: false,
+				x: minX,
+				y: minY,
+				width: width,
+				height: height
 			});
 
 			const link = document.createElement('a');
-			link.download = `vsm-diagram-${new Date().toISOString().split('T')[0]}.png`;
+			link.download = `throughline-vsm-${new Date().toISOString().split('T')[0]}.png`;
 			link.href = canvas.toDataURL('image/png');
 			link.click();
 		} catch (error) {
@@ -47,27 +86,85 @@
 		closeMenu();
 
 		try {
-			const flowWrapper = document.querySelector('.flow-wrapper') as HTMLElement;
-			if (!flowWrapper) {
+			// Get the viewport element which contains all nodes
+			const viewport = document.querySelector('.svelte-flow__viewport') as HTMLElement;
+			if (!viewport) {
 				alert('Flow diagram not found');
 				return;
 			}
 
-			const canvas = await html2canvas(flowWrapper, {
-				backgroundColor: '#f5f5f5',
+			// Get all nodes to ensure they're in view
+			const nodes = document.querySelectorAll('.svelte-flow__node');
+			if (nodes.length === 0) {
+				alert('No activities to export. Please add some activities first.');
+				return;
+			}
+
+			// Calculate the bounding box of all nodes
+			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+			nodes.forEach((node) => {
+				const rect = node.getBoundingClientRect();
+				const viewportRect = viewport.getBoundingClientRect();
+
+				// Convert to viewport coordinates
+				const x = rect.left - viewportRect.left;
+				const y = rect.top - viewportRect.top;
+
+				minX = Math.min(minX, x);
+				minY = Math.min(minY, y);
+				maxX = Math.max(maxX, x + rect.width);
+				maxY = Math.max(maxY, y + rect.height);
+			});
+
+			// Add padding
+			const padding = 100;
+			minX -= padding;
+			minY -= padding;
+			maxX += padding;
+			maxY += padding;
+
+			const width = maxX - minX;
+			const height = maxY - minY;
+
+			// Capture the viewport with high resolution
+			const canvas = await html2canvas(viewport, {
+				backgroundColor: '#FFF8DC', // British Rail cream
 				scale: 2,
-				logging: false
+				logging: false,
+				x: minX,
+				y: minY,
+				width: width,
+				height: height
 			});
 
 			const imgData = canvas.toDataURL('image/png');
+
+			// Create PDF with appropriate orientation
+			const aspectRatio = canvas.width / canvas.height;
 			const pdf = new jsPDF({
-				orientation: canvas.width > canvas.height ? 'landscape' : 'portrait',
-				unit: 'px',
-				format: [canvas.width, canvas.height]
+				orientation: aspectRatio > 1 ? 'landscape' : 'portrait',
+				unit: 'mm',
+				format: 'a3' // A3 for better visibility
 			});
 
-			pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
-			pdf.save(`vsm-diagram-${new Date().toISOString().split('T')[0]}.pdf`);
+			const pdfWidth = pdf.internal.pageSize.getWidth();
+			const pdfHeight = pdf.internal.pageSize.getHeight();
+
+			// Calculate scaling to fit
+			let imgWidth = pdfWidth;
+			let imgHeight = (canvas.height / canvas.width) * pdfWidth;
+
+			if (imgHeight > pdfHeight) {
+				imgHeight = pdfHeight;
+				imgWidth = (canvas.width / canvas.height) * pdfHeight;
+			}
+
+			// Center the image
+			const xOffset = (pdfWidth - imgWidth) / 2;
+			const yOffset = (pdfHeight - imgHeight) / 2;
+
+			pdf.addImage(imgData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
+			pdf.save(`throughline-vsm-${new Date().toISOString().split('T')[0]}.pdf`);
 		} catch (error) {
 			console.error('Export to PDF failed:', error);
 			alert('Failed to export diagram. Please try again.');
@@ -130,22 +227,24 @@
 	}
 
 	.export-button {
-		background: rgba(16, 185, 129, 0.1);
-		border: 1px solid rgba(16, 185, 129, 0.3);
-		border-radius: 6px;
+		background: rgba(0, 61, 122, 0.1);
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
 		padding: 8px 10px;
 		cursor: pointer;
-		color: #10b981;
+		color: var(--color-british-blue);
 		display: flex;
 		align-items: center;
 		gap: 6px;
 		font-size: 0.875rem;
+		font-weight: 600;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: all 0.2s;
 	}
 
 	.export-button:hover:not(:disabled) {
-		background: rgba(16, 185, 129, 0.2);
-		border-color: rgba(16, 185, 129, 0.5);
+		background: var(--color-british-blue);
+		color: white;
 	}
 
 	.export-button:disabled {
@@ -171,17 +270,17 @@
 		top: calc(100% + 8px);
 		right: 0;
 		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-		min-width: 160px;
+		border: 3px solid var(--color-british-blue);
+		border-radius: 0;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+		min-width: 180px;
 		z-index: 100;
 		overflow: hidden;
 	}
 
 	.menu-item {
 		width: 100%;
-		padding: 10px 16px;
+		padding: 12px 16px;
 		border: none;
 		background: white;
 		text-align: left;
@@ -190,12 +289,20 @@
 		align-items: center;
 		gap: 10px;
 		font-size: 0.875rem;
-		color: #374151;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		color: #333;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: background 0.15s;
+		border-bottom: 1px solid #E0E0E0;
+	}
+
+	.menu-item:last-child {
+		border-bottom: none;
 	}
 
 	.menu-item:hover {
-		background: #f3f4f6;
+		background: var(--color-british-cream);
 	}
 
 	.menu-item svg {
