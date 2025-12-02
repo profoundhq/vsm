@@ -8,7 +8,7 @@
 	let format: 'csv' | 'yaml' = 'csv';
 	let editorContent = '';
 	let errorMessage = '';
-	let previewChanges: { action: 'add' | 'update', activity: VSMActivity }[] = [];
+	let previewChanges: { action: 'add' | 'update' | 'delete', activity: VSMActivity }[] = [];
 
 	$: activities = $vsmStore.stream?.activities || [];
 
@@ -334,6 +334,21 @@
 				}
 			});
 
+			// Check for activities that were deleted (exist in current but not in imported)
+			activities.forEach(existing => {
+				const inImported = importedActivities.find(imported =>
+					imported.name.toLowerCase() === existing.name.toLowerCase()
+				);
+
+				if (!inImported) {
+					// Activity was deleted from the import
+					previewChanges.push({
+						action: 'delete',
+						activity: existing
+					});
+				}
+			});
+
 		} catch (error: any) {
 			errorMessage = error.message || 'Failed to parse content';
 		}
@@ -345,8 +360,10 @@
 		previewChanges.forEach(change => {
 			if (change.action === 'add') {
 				vsmStore.addActivity(change.activity);
-			} else {
+			} else if (change.action === 'update') {
 				vsmStore.updateActivity(change.activity.id, change.activity);
+			} else if (change.action === 'delete') {
+				vsmStore.removeActivity(change.activity.id);
 			}
 		});
 
@@ -717,6 +734,11 @@
 	.preview-item.update .preview-badge {
 		background: #dbeafe;
 		color: #1e40af;
+	}
+
+	.preview-item.delete .preview-badge {
+		background: #fee2e2;
+		color: #991b1b;
 	}
 
 	.preview-name {
