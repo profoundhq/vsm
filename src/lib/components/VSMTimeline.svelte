@@ -4,7 +4,12 @@
 
 	let isExpanded = true;
 
+	// Match the spacing and positioning from VSMFlow.svelte
+	const spacing = 300;
+	const startX = 100;
+
 	$: activities = $vsmStore.stream?.activities || [];
+	$: visualOrder = [...activities].reverse(); // Match VSMFlow's visual order
 
 	// Helper to normalize time to minutes
 	function normalizeToMinutes(value: number, unit?: TimeUnit): number {
@@ -60,17 +65,19 @@
 		? (activities.reduce((product, a) => product * ((a.metrics?.completeAccurate || 100) / 100), 1) * 100).toFixed(1)
 		: 0;
 
-	// Calculate timeline segments (all in minutes)
-	$: timelineSegments = activities.map(a => {
+	// Calculate timeline segments (all in minutes) - using visualOrder to match node positions
+	$: timelineSegments = visualOrder.map((a, index) => {
 		const processMinutes = normalizeToMinutes(a.processTime || 0, a.processTimeUnit);
 		const leadMinutes = normalizeToMinutes(a.leadTime || 0, a.leadTimeUnit);
 		return {
+			id: a.id,
 			name: a.name,
 			processTime: processMinutes,
 			processDisplay: a.processTime ? `${a.processTime}${a.processTimeUnit || 'mins'}` : '',
 			leadTime: leadMinutes,
 			leadDisplay: a.leadTime ? `${a.leadTime}${a.leadTimeUnit || 'hours'}` : '',
-			waitTime: leadMinutes - processMinutes
+			waitTime: leadMinutes - processMinutes,
+			xPosition: startX + (index + 1) * spacing // Position matches the node in the flow
 		};
 	});
 
@@ -161,36 +168,24 @@
 				{/if}
 			</div>
 
-			<!-- Visual Timeline -->
+			<!-- Visual Timeline - Lead Time Ladder -->
 			<div class="timeline-visual">
-				<div class="timeline-title">Activity Timeline (proportional to lead time)</div>
-				<div class="timeline-activities">
+				<div class="timeline-title">Lead Time Ladder</div>
+				<div class="timeline-ladder" style="min-width: {startX + (visualOrder.length + 2) * spacing}px;">
 					{#each timelineSegments as segment}
 						{#if segment.leadTime > 0}
-							<div class="activity-row">
-								<div class="activity-name">{segment.name}</div>
-								<div class="activity-bar-container">
-									<div
-										class="activity-bar"
-										style="width: {(segment.leadTime / maxLeadTime * 100)}%"
-										title="Lead time: {segment.leadDisplay}"
-									>
-										<div
-											class="process-time"
-											style="width: {segment.processTime > 0 ? (segment.processTime / segment.leadTime * 100) : 0}%"
-											title="Process time: {segment.processDisplay}"
-										>
-											{#if segment.processTime > 0}
-												<span class="bar-label">{segment.processDisplay}</span>
-											{/if}
-										</div>
-										{#if segment.waitTime > 0}
-											<div class="wait-time" title="Wait time: {formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}">
-												<span class="bar-label">{formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}</span>
-											</div>
-										{/if}
+							<div class="ladder-segment" style="left: {segment.xPosition}px;">
+								<div class="ladder-bars">
+									<!-- Process Time Bar (value-add) -->
+									<div class="ladder-bar process">
+										<div class="bar-value">{segment.processDisplay}</div>
+										<div class="bar-label-bottom">PT</div>
 									</div>
-									<span class="total-time">{segment.leadDisplay}</span>
+									<!-- Lead Time Bar (total time) -->
+									<div class="ladder-bar lead">
+										<div class="bar-value">{segment.leadDisplay}</div>
+										<div class="bar-label-bottom">LT</div>
+									</div>
 								</div>
 							</div>
 						{/if}
@@ -405,11 +400,12 @@
 		letter-spacing: 0.3px;
 	}
 
-	/* Timeline Visual */
+	/* Timeline Visual - Lead Time Ladder */
 	.timeline-visual {
 		padding: 20px;
 		background: white;
 		border-top: 2px solid var(--color-british-blue);
+		overflow-x: auto;
 	}
 
 	.timeline-title {
@@ -424,81 +420,70 @@
 		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
-	.timeline-activities {
-		display: flex;
-		flex-direction: column;
-		gap: 12px;
+	.timeline-ladder {
+		position: relative;
+		min-height: 120px;
+		width: 100%;
+		/* Ensure container is wide enough for all positioned segments */
+		/* Width = startX + (numActivities + 2) * spacing for START, activities, and END */
 	}
 
-	.activity-row {
+	.ladder-segment {
+		position: absolute;
+		top: 0;
+		transform: translateX(-50%); /* Center on the activity node */
+	}
+
+	.ladder-bars {
+		display: flex;
+		gap: 8px;
+		align-items: flex-end;
+	}
+
+	.ladder-bar {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
 		gap: 6px;
+		min-width: 60px;
 	}
 
-	.activity-name {
-		font-size: 12px;
+	.ladder-bar.process {
+		/* Process Time (value-add) */
+	}
+
+	.ladder-bar.lead {
+		/* Lead Time (total) */
+	}
+
+	.bar-value {
+		background: var(--color-british-blue);
+		color: white;
+		padding: 8px 12px;
+		border: 2px solid var(--color-british-blue);
+		font-size: 11px;
 		font-weight: 700;
-		color: var(--color-british-blue);
+		letter-spacing: 0.3px;
+		font-family: 'IBM Plex Sans', sans-serif;
+		text-align: center;
+		min-height: 36px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.ladder-bar.process .bar-value {
+		background: var(--color-british-green);
+		border-color: var(--color-british-green);
+	}
+
+	.bar-label-bottom {
+		font-size: 10px;
+		font-weight: 700;
+		color: var(--color-british-grey);
+		text-transform: uppercase;
 		letter-spacing: 0.5px;
 		font-family: 'IBM Plex Sans', sans-serif;
-	}
-
-	.activity-bar-container {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-
-	.activity-bar {
-		display: flex;
-		height: 36px;
-		min-width: 80px;
-		border-radius: 0;
-		overflow: hidden;
-		border: 2px solid var(--color-british-blue);
-		box-shadow: none;
-	}
-
-	.process-time {
-		background: var(--color-british-green);
-		color: white;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 11px;
-		font-weight: 700;
-		letter-spacing: 0.3px;
-		font-family: 'IBM Plex Sans', sans-serif;
-		position: relative;
-	}
-
-	.wait-time {
-		background: var(--color-british-gold);
-		color: #78350f;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 11px;
-		font-weight: 700;
-		letter-spacing: 0.3px;
-		font-family: 'IBM Plex Sans', sans-serif;
-		flex: 1;
-	}
-
-	.bar-label {
-		padding: 0 8px;
-		white-space: nowrap;
-	}
-
-	.total-time {
-		font-size: 11px;
-		font-weight: 700;
-		color: var(--color-british-blue);
-		letter-spacing: 0.3px;
-		font-family: 'IBM Plex Sans', sans-serif;
-		white-space: nowrap;
-		flex-shrink: 0;
 	}
 
 	/* Tablet */
@@ -533,15 +518,13 @@
 			font-size: 12px;
 		}
 
-		.activity-row {
-			flex-direction: row;
-			align-items: center;
-			gap: 12px;
+		.ladder-bar {
+			min-width: 70px;
 		}
 
-		.activity-name {
-			min-width: 140px;
-			font-size: 13px;
+		.bar-value {
+			font-size: 12px;
+			padding: 10px 14px;
 		}
 	}
 
@@ -581,21 +564,17 @@
 			font-size: 13px;
 		}
 
-		.activity-name {
-			min-width: 180px;
-			font-size: 14px;
+		.ladder-bar {
+			min-width: 80px;
 		}
 
-		.activity-bar {
-			height: 36px;
+		.bar-value {
+			font-size: 13px;
+			padding: 12px 16px;
 		}
 
-		.bar-label {
-			font-size: 12px;
-		}
-
-		.total-time {
-			font-size: 12px;
+		.bar-label-bottom {
+			font-size: 11px;
 		}
 	}
 </style>
