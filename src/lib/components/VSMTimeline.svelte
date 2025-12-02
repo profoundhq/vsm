@@ -171,22 +171,32 @@
 			<!-- Visual Timeline - Lead Time Ladder -->
 			<div class="timeline-visual">
 				<div class="timeline-title">Lead Time Ladder</div>
+				<div class="ladder-info">
+					<div class="ladder-summary">
+						<span class="summary-item"><span class="legend-box wait"></span> Wait Time (waste)</span>
+						<span class="summary-item"><span class="legend-box process"></span> Process Time (value-add)</span>
+					</div>
+				</div>
 				<div class="timeline-ladder" style="min-width: {startX + (visualOrder.length + 2) * spacing}px;">
-					{#each timelineSegments as segment}
+					{#each timelineSegments as segment, index}
 						{#if segment.leadTime > 0}
 							<div class="ladder-segment" style="left: {segment.xPosition}px;">
-								<div class="ladder-bars">
-									<!-- Process Time Bar (value-add) -->
-									<div class="ladder-bar process">
-										<div class="bar-value">{segment.processDisplay}</div>
-										<div class="bar-label-bottom">PT</div>
+								<!-- Wait Time (horizontal) -->
+								{#if segment.waitTime > 0}
+									<div class="time-section wait-section">
+										<div class="time-bar horizontal">
+											<div class="time-label">{formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}</div>
+										</div>
 									</div>
-									<!-- Lead Time Bar (total time) -->
-									<div class="ladder-bar lead">
-										<div class="bar-value">{segment.leadDisplay}</div>
-										<div class="bar-label-bottom">LT</div>
+								{/if}
+								<!-- Process Time (vertical drop) -->
+								{#if segment.processTime > 0}
+									<div class="time-section process-section">
+										<div class="time-bar vertical">
+											<div class="time-label">{segment.processDisplay}</div>
+										</div>
 									</div>
-								</div>
+								{/if}
 							</div>
 						{/if}
 					{/each}
@@ -414,76 +424,104 @@
 		color: white;
 		background: var(--color-british-grey);
 		padding: 8px 12px;
-		margin: -20px -20px 16px -20px;
+		margin: -20px -20px 12px -20px;
 		text-transform: uppercase;
 		letter-spacing: 1px;
 		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
+	.ladder-info {
+		margin-bottom: 16px;
+	}
+
+	.ladder-summary {
+		display: flex;
+		gap: 16px;
+		flex-wrap: wrap;
+		font-size: 11px;
+		color: var(--color-british-grey);
+		font-family: 'IBM Plex Sans', sans-serif;
+	}
+
+	.summary-item {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.legend-box {
+		width: 16px;
+		height: 16px;
+		border: 2px solid var(--color-british-blue);
+	}
+
+	.legend-box.wait {
+		background: var(--color-british-gold);
+	}
+
+	.legend-box.process {
+		background: var(--color-british-green);
+	}
+
 	.timeline-ladder {
 		position: relative;
-		min-height: 120px;
+		min-height: 150px;
 		width: 100%;
-		/* Ensure container is wide enough for all positioned segments */
-		/* Width = startX + (numActivities + 2) * spacing for START, activities, and END */
+		border-bottom: 2px solid var(--color-british-blue);
+		padding-bottom: 20px;
 	}
 
 	.ladder-segment {
 		position: absolute;
 		top: 0;
-		transform: translateX(-50%); /* Center on the activity node */
-	}
-
-	.ladder-bars {
-		display: flex;
-		gap: 8px;
-		align-items: flex-end;
-	}
-
-	.ladder-bar {
+		transform: translateX(-50%);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 6px;
-		min-width: 60px;
 	}
 
-	.ladder-bar.process {
-		/* Process Time (value-add) */
-	}
-
-	.ladder-bar.lead {
-		/* Lead Time (total) */
-	}
-
-	.bar-value {
-		background: var(--color-british-blue);
-		color: white;
-		padding: 8px 12px;
-		border: 2px solid var(--color-british-blue);
-		font-size: 11px;
-		font-weight: 700;
-		letter-spacing: 0.3px;
-		font-family: 'IBM Plex Sans', sans-serif;
-		text-align: center;
-		min-height: 36px;
+	.time-section {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
-	.ladder-bar.process .bar-value {
-		background: var(--color-british-green);
-		border-color: var(--color-british-green);
+	.wait-section {
+		margin-bottom: 4px;
 	}
 
-	.bar-label-bottom {
-		font-size: 10px;
+	.time-bar.horizontal {
+		background: var(--color-british-gold);
+		border: 2px solid var(--color-british-blue);
+		padding: 6px 12px;
+		min-width: 60px;
+		text-align: center;
+	}
+
+	.time-bar.vertical {
+		background: var(--color-british-green);
+		border: 2px solid var(--color-british-blue);
+		padding: 12px 8px;
+		min-height: 50px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		writing-mode: vertical-lr;
+		text-orientation: mixed;
+	}
+
+	.time-label {
+		font-size: 11px;
 		font-weight: 700;
-		color: var(--color-british-grey);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
+		color: white;
+		letter-spacing: 0.3px;
 		font-family: 'IBM Plex Sans', sans-serif;
+		white-space: nowrap;
+	}
+
+	.time-bar.vertical .time-label {
+		writing-mode: vertical-lr;
+		transform: rotate(180deg);
 	}
 
 	/* Tablet */
@@ -518,13 +556,18 @@
 			font-size: 12px;
 		}
 
-		.ladder-bar {
-			min-width: 70px;
+		.time-bar.horizontal {
+			min-width: 80px;
+			padding: 8px 14px;
 		}
 
-		.bar-value {
+		.time-bar.vertical {
+			min-height: 60px;
+			padding: 14px 10px;
+		}
+
+		.time-label {
 			font-size: 12px;
-			padding: 10px 14px;
 		}
 	}
 
@@ -564,17 +607,22 @@
 			font-size: 13px;
 		}
 
-		.ladder-bar {
-			min-width: 80px;
+		.ladder-summary {
+			font-size: 12px;
 		}
 
-		.bar-value {
+		.time-bar.horizontal {
+			min-width: 100px;
+			padding: 10px 16px;
+		}
+
+		.time-bar.vertical {
+			min-height: 70px;
+			padding: 16px 12px;
+		}
+
+		.time-label {
 			font-size: 13px;
-			padding: 12px 16px;
-		}
-
-		.bar-label-bottom {
-			font-size: 11px;
 		}
 	}
 </style>
