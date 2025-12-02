@@ -3,6 +3,8 @@
 
 	let activityName = '';
 	let showAddForm = false;
+	let streamName = '';
+	let showAddStreamForm = false;
 
 	function addActivity() {
 		if (!activityName.trim()) return;
@@ -25,7 +27,15 @@
 		showAddForm = false;
 	}
 
-	function handleKeydown(event: KeyboardEvent) {
+	function addStream() {
+		if (!streamName.trim()) return;
+
+		vsmStore.createNewStream(streamName.trim());
+		streamName = '';
+		showAddStreamForm = false;
+	}
+
+	function handleActivityKeydown(event: KeyboardEvent) {
 		if (event.key === 'Enter') {
 			addActivity();
 		} else if (event.key === 'Escape') {
@@ -33,30 +43,59 @@
 			activityName = '';
 		}
 	}
+
+	function handleStreamKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			addStream();
+		} else if (event.key === 'Escape') {
+			showAddStreamForm = false;
+			streamName = '';
+		}
+	}
 </script>
 
 <div class="toolbar">
 	<div class="toolbar-content">
-		{#if showAddForm}
-			<div class="add-form">
-				<input
-					type="text"
-					bind:value={activityName}
-					on:keydown={handleKeydown}
-					placeholder="Activity name..."
-					class="activity-input"
-					autofocus
-				/>
-				<button on:click={addActivity} class="btn btn-primary">Add</button>
-				<button on:click={() => { showAddForm = false; activityName = ''; }} class="btn btn-secondary">
-					Cancel
+		<div class="button-group">
+			{#if showAddStreamForm}
+				<div class="add-form">
+					<input
+						type="text"
+						bind:value={streamName}
+						on:keydown={handleStreamKeydown}
+						placeholder="Stream name..."
+						class="activity-input"
+						autofocus
+					/>
+					<button on:click={addStream} class="btn btn-primary">Add</button>
+					<button on:click={() => { showAddStreamForm = false; streamName = ''; }} class="btn btn-secondary">
+						Cancel
+					</button>
+				</div>
+			{:else if showAddForm}
+				<div class="add-form">
+					<input
+						type="text"
+						bind:value={activityName}
+						on:keydown={handleActivityKeydown}
+						placeholder="Activity name..."
+						class="activity-input"
+						autofocus
+					/>
+					<button on:click={addActivity} class="btn btn-primary">Add</button>
+					<button on:click={() => { showAddForm = false; activityName = ''; }} class="btn btn-secondary">
+						Cancel
+					</button>
+				</div>
+			{:else}
+				<button on:click={() => showAddStreamForm = true} class="btn btn-add-stream">
+					+ Add Stream
 				</button>
-			</div>
-		{:else}
-			<button on:click={() => showAddForm = true} class="btn btn-add">
-				+ Add Activity
-			</button>
-		{/if}
+				<button on:click={() => showAddForm = true} class="btn btn-add">
+					+ Add Activity
+				</button>
+			{/if}
+		</div>
 
 		<div class="toolbar-info">
 			{#if $vsmStore.stream}
@@ -82,6 +121,13 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: 12px;
+	}
+
+	.button-group {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex: 1;
 	}
 
 	.add-form {
@@ -114,6 +160,15 @@
 		font-size: 13px;
 		transition: all 0.2s;
 		white-space: nowrap;
+	}
+
+	.btn-add-stream {
+		background: #10b981;
+		color: white;
+	}
+
+	.btn-add-stream:hover {
+		background: #059669;
 	}
 
 	.btn-add {

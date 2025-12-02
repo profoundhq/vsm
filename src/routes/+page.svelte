@@ -1,13 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import ChatInterface from '$lib/components/ChatInterface.svelte';
 	import VSMFlow from '$lib/components/VSMFlow.svelte';
 	import NodeToolbar from '$lib/components/NodeToolbar.svelte';
 	import StreamManager from '$lib/components/StreamManager.svelte';
 	import SidebarMenu from '$lib/components/SidebarMenu.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 
-	let showChat = true;
 	let presentationMode = false;
 	let showSidebar = false;
 	let appContainer: HTMLElement;
@@ -16,10 +14,6 @@
 		if (confirm('Are you sure you want to reset the VSM? This will clear all data.')) {
 			vsmStore.reset();
 		}
-	}
-
-	function toggleChat() {
-		showChat = !showChat;
 	}
 
 	function toggleSidebar() {
@@ -32,7 +26,6 @@
 
 	async function enterPresentationMode() {
 		presentationMode = true;
-		showChat = false;
 
 		// Try to enter fullscreen
 		try {
@@ -117,12 +110,6 @@
 			{/if}
 			<VSMFlow />
 		</main>
-
-		{#if showChat && !presentationMode}
-			<aside class="chat-panel">
-				<ChatInterface />
-			</aside>
-		{/if}
 	</div>
 
 	{#if presentationMode}
@@ -133,8 +120,6 @@
 
 	<SidebarMenu
 		isOpen={showSidebar}
-		showChat={showChat}
-		onToggleChat={toggleChat}
 		onReset={handleReset}
 		onClose={closeSidebar}
 	/>
@@ -273,12 +258,6 @@
 		overflow: auto;
 		position: relative;
 		min-height: 0;
-	}
-
-	.chat-panel {
-		background: white;
-		flex-shrink: 0;
-		padding-bottom: env(safe-area-inset-bottom);
 	}
 
 	/* Tablet styles */

@@ -5,16 +5,10 @@
 	import DiagramExport from './DiagramExport.svelte';
 
 	export let isOpen = false;
-	export let showChat: boolean;
-	export let onToggleChat: () => void;
 	export let onReset: () => void;
 	export let onClose: () => void;
 
 	const dispatch = createEventDispatcher();
-
-	function handleToggleChat() {
-		onToggleChat();
-	}
 
 	function handleReset() {
 		onReset();
@@ -50,16 +44,6 @@
 				<ExportImport />
 				<DiagramExport />
 			</div>
-		</section>
-
-		<section class="menu-section">
-			<h3 class="section-title">View</h3>
-			<button class="menu-item" on:click={handleToggleChat}>
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-				</svg>
-				<span>{showChat ? 'Hide' : 'Show'} Chat</span>
-			</button>
 		</section>
 
 		<section class="menu-section">
