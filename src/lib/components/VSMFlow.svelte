@@ -28,6 +28,20 @@
 	let edges = writable<Edge[]>([]);
 	let editingActivity: VSMActivity | null = null;
 	let insertingAfterActivityId: string | null = null;
+	let newStreamName = '';
+
+	function handleCreateStream() {
+		if (newStreamName.trim()) {
+			vsmStore.createNewStream(newStreamName.trim());
+			newStreamName = '';
+		}
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			handleCreateStream();
+		}
+	}
 
 	// Handle insert requests from nodes
 	$: if ($uiStore.insertingAfterActivityId) {
@@ -151,48 +165,65 @@
 </script>
 
 <div class="flow-wrapper">
-	<div class="flow-container">
-		<SvelteFlow
-			{nodes}
-			{edges}
-			{nodeTypes}
-			fitView
-			on:nodeclick={handleNodeClick}
-		>
-			<Controls showInteractive={false}>
-				<button
-					class="edit-mode-btn"
-					class:active={$uiStore.editModeEnabled}
-					on:click={() => uiStore.toggleEditMode()}
-					title={$uiStore.editModeEnabled ? 'Disable edit mode' : 'Enable edit mode'}
-				>
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-						<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-					</svg>
-				</button>
-			</Controls>
-			<Background variant={BackgroundVariant.Dots} />
-		</SvelteFlow>
-
-		{#if !$vsmStore.stream}
-			<div class="empty-state">
+	{#if !$vsmStore.stream}
+		<div class="stream-prompt">
+			<div class="prompt-content">
 				<h2>Which stream would you like to map?</h2>
 				{#if $vsmStore.streams.length === 0}
-					<p>Click "+ Add Stream" in the toolbar above to get started</p>
+					<p>Enter a name for your first value stream</p>
 				{:else}
-					<p>Select a stream from the dropdown above or create a new one</p>
+					<p>Create a new stream or select one from the dropdown above</p>
 				{/if}
+				<div class="input-group">
+					<input
+						type="text"
+						bind:value={newStreamName}
+						on:keydown={handleKeydown}
+						placeholder="e.g., Customer Order Fulfillment"
+						class="stream-input"
+						autofocus
+					/>
+					<button on:click={handleCreateStream} class="create-btn">
+						Create Stream
+					</button>
+				</div>
 			</div>
-		{:else if $vsmStore.stream.activities.length === 0}
-			<div class="empty-state">
-				<h2>Add activities between START and END</h2>
-				<p>Click "+ Add Activity" to map your process from end to start 🔙</p>
-			</div>
-		{/if}
-	</div>
+		</div>
+	{:else}
+		<div class="flow-container">
+			<SvelteFlow
+				{nodes}
+				{edges}
+				{nodeTypes}
+				fitView
+				on:nodeclick={handleNodeClick}
+			>
+				<Controls showInteractive={false}>
+					<button
+						class="edit-mode-btn"
+						class:active={$uiStore.editModeEnabled}
+						on:click={() => uiStore.toggleEditMode()}
+						title={$uiStore.editModeEnabled ? 'Disable edit mode' : 'Enable edit mode'}
+					>
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+							<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+						</svg>
+					</button>
+				</Controls>
+				<Background variant={BackgroundVariant.Dots} />
+			</SvelteFlow>
 
-	<VSMTimeline />
+			{#if $vsmStore.stream.activities.length === 0}
+				<div class="empty-state">
+					<h2>Add activities between START and END</h2>
+					<p>Click "+ Add Activity" to map your process from end to start 🔙</p>
+				</div>
+			{/if}
+		</div>
+
+		<VSMTimeline />
+	{/if}
 </div>
 
 {#if editingActivity}
@@ -218,6 +249,77 @@
 		min-height: 0;
 		position: relative;
 		background: #fafafa;
+	}
+
+	.stream-prompt {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #fafafa;
+		padding: 20px;
+	}
+
+	.prompt-content {
+		max-width: 500px;
+		width: 100%;
+		text-align: center;
+	}
+
+	.prompt-content h2 {
+		font-size: 24px;
+		color: #111827;
+		margin-bottom: 12px;
+		font-weight: 600;
+	}
+
+	.prompt-content p {
+		font-size: 14px;
+		color: #6b7280;
+		margin-bottom: 24px;
+	}
+
+	.input-group {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+	}
+
+	.stream-input {
+		width: 100%;
+		padding: 12px 16px;
+		border: 2px solid #d1d5db;
+		border-radius: 8px;
+		font-size: 16px;
+		transition: border-color 0.2s;
+	}
+
+	.stream-input:focus {
+		outline: none;
+		border-color: #3b82f6;
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+	}
+
+	.create-btn {
+		padding: 12px 24px;
+		background: #10b981;
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-size: 16px;
+		font-weight: 600;
+		cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.create-btn:hover {
+		background: #059669;
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+	}
+
+	.create-btn:active {
+		transform: translateY(0);
 	}
 
 	.empty-state {
@@ -309,6 +411,26 @@
 
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
+		.prompt-content h2 {
+			font-size: 32px;
+		}
+
+		.prompt-content p {
+			font-size: 16px;
+		}
+
+		.input-group {
+			flex-direction: row;
+		}
+
+		.stream-input {
+			flex: 1;
+		}
+
+		.create-btn {
+			flex-shrink: 0;
+		}
+
 		.empty-state h2 {
 			font-size: 24px;
 		}
