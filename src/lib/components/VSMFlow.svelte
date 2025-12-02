@@ -177,8 +177,12 @@
 
 		{#if !$vsmStore.stream}
 			<div class="empty-state">
-				<h2>Create a value stream</h2>
-				<p>Use the chat below or the stream selector to create your first value stream map</p>
+				<h2>Which stream would you like to map?</h2>
+				{#if $vsmStore.streams.length === 0}
+					<p>Click "+ Add Stream" in the toolbar above to get started</p>
+				{:else}
+					<p>Select a stream from the dropdown above or create a new one</p>
+				{/if}
 			</div>
 		{:else if $vsmStore.stream.activities.length === 0}
 			<div class="empty-state">
