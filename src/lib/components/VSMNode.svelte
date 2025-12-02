@@ -76,7 +76,7 @@
 		<div class="kaizen-bursts">
 			{#each data.kaizenBursts || [] as burst}
 				<div class="kaizen-burst" class:high={burst.priority === 'high'} class:medium={burst.priority === 'medium'}>
-					<span class="burst-icon">⚡</span>
+					<span class="burst-icon"></span>
 					<span class="burst-text">{burst.description}</span>
 				</div>
 			{/each}
@@ -110,13 +110,13 @@
 <style>
 	/* Mobile-first node design */
 	.vsm-node {
-		background: white;
-		border: 2px solid var(--color-border);
-		border-radius: 8px;
-		padding: 10px;
-		min-width: 160px;
-		max-width: 220px;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		background: transparent;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		min-width: 200px;
+		max-width: 260px;
+		box-shadow: none;
 		transition: all 0.2s;
 		touch-action: none;
 		position: relative;
@@ -124,91 +124,103 @@
 
 	.vsm-node:hover,
 	.vsm-node:active {
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+		transform: translateY(-2px);
 	}
 
 	.vsm-node.constraint {
-		border-color: var(--color-constraint);
-		background: #fff5f5;
 		animation: pulse-constraint 2s infinite;
 	}
 
 	@keyframes pulse-constraint {
 		0%, 100% {
-			box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+			opacity: 1;
 		}
 		50% {
-			box-shadow: 0 4px 16px rgba(239, 68, 68, 0.6);
+			opacity: 0.9;
 		}
 	}
 
 	.node-header {
+		background: var(--color-british-blue);
+		color: white;
+		padding: 12px 16px;
+		border-left: 6px solid var(--color-british-gold);
+		margin-bottom: 2px;
 		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
-		gap: 6px;
-		margin-bottom: 8px;
+		flex-direction: column;
+		gap: 4px;
 	}
 
 	.node-header h3 {
-		font-size: 13px;
-		font-weight: 600;
+		font-size: 14px;
+		font-weight: 700;
 		margin: 0;
-		line-height: 1.3;
-		flex: 1;
+		line-height: 1.2;
+		letter-spacing: 1px;
+		text-transform: uppercase;
 	}
 
 	.constraint-badge {
 		font-size: 10px;
-		padding: 2px 5px;
-		background: var(--color-constraint);
+		padding: 3px 6px;
+		background: var(--color-british-red);
 		color: white;
-		border-radius: 3px;
+		border-radius: 0;
 		white-space: nowrap;
-		flex-shrink: 0;
+		letter-spacing: 0.5px;
 	}
 
 	.node-timing {
-		background: #f8f9fa;
-		padding: 6px 8px;
-		border-radius: 4px;
-		margin-top: 6px;
+		background: white;
+		border: 2px solid var(--color-british-blue);
+		padding: 16px;
 	}
 
 	.timing-item {
 		display: flex;
 		justify-content: space-between;
 		font-size: 11px;
-		margin-bottom: 3px;
+		margin-bottom: 8px;
+		padding-bottom: 8px;
+		border-bottom: 1px solid #E0E0E0;
 		gap: 8px;
 	}
 
 	.timing-item:last-child {
 		margin-bottom: 0;
+		padding-bottom: 0;
+		border-bottom: none;
 	}
 
 	.label {
-		color: #666;
+		color: var(--color-british-grey);
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		font-size: 10px;
 		flex-shrink: 0;
 	}
 
 	.value {
-		font-weight: 600;
-		color: var(--color-primary);
+		font-weight: 700;
+		color: var(--color-british-blue);
+		font-size: 14px;
 	}
 
 	.node-dimensions {
-		background: #f0f7ff;
-		padding: 6px 8px;
-		border-radius: 4px;
-		margin-top: 6px;
+		background: white;
+		border: 2px solid var(--color-british-blue);
+		border-top: none;
+		padding: 12px 16px;
 		font-size: 10px;
 	}
 
 	.dim-item {
-		margin-bottom: 2px;
-		color: #555;
+		margin-bottom: 6px;
+		color: var(--color-british-grey);
 		line-height: 1.4;
+		font-weight: 600;
+		letter-spacing: 0.3px;
 	}
 
 	.dim-item:last-child {
@@ -216,151 +228,182 @@
 	}
 
 	.swimlane-badge {
-		background: #e0e7ff;
-		color: #4f46e5;
-		font-size: 10px;
-		padding: 4px 8px;
-		border-radius: 4px;
-		margin-top: 6px;
-		font-weight: 500;
+		background: var(--color-british-grey);
+		color: white;
+		font-size: 11px;
+		padding: 8px 12px;
+		border-radius: 0;
+		font-weight: 600;
 		text-align: center;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
 	}
 
 	.kaizen-bursts {
-		margin-top: 8px;
+		background: white;
+		border: 2px solid var(--color-british-blue);
+		border-top: none;
+		padding: 12px 16px;
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 6px;
 	}
 
 	.kaizen-burst {
-		background: #fef3c7;
-		border: 1px solid #fbbf24;
-		border-radius: 4px;
-		padding: 4px 6px;
-		font-size: 10px;
+		background: transparent;
+		border: none;
+		border-radius: 0;
+		padding: 0;
+		font-size: 11px;
 		display: flex;
 		align-items: center;
-		gap: 4px;
-		color: #92400e;
+		gap: 8px;
+		color: #333;
 	}
 
-	.kaizen-burst.high {
-		background: #fee2e2;
-		border-color: #ef4444;
-		color: #991b1b;
-	}
-
-	.kaizen-burst.medium {
-		background: #fed7aa;
-		border-color: #f97316;
-		color: #9a3412;
+	.kaizen-burst.high .burst-icon,
+	.kaizen-burst.medium .burst-icon {
+		font-size: 10px;
 	}
 
 	.burst-icon {
-		font-size: 12px;
-		line-height: 1;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--color-british-gold);
+		flex-shrink: 0;
+	}
+
+	.kaizen-burst.high .burst-icon {
+		background: var(--color-british-red);
+	}
+
+	.kaizen-burst.medium .burst-icon {
+		background: var(--color-british-gold);
 	}
 
 	.burst-text {
 		flex: 1;
 		line-height: 1.3;
+		font-size: 10px;
 	}
 
 	.node-controls {
 		display: flex;
-		gap: 4px;
-		margin-top: 8px;
-		padding-top: 8px;
-		border-top: 1px solid #e5e7eb;
-		justify-content: center;
+		gap: 0;
+		background: white;
+		border: 2px solid var(--color-british-blue);
+		border-top: none;
+		justify-content: stretch;
 	}
 
 	.control-btn {
-		background: #f3f4f6;
-		border: 1px solid #d1d5db;
-		border-radius: 4px;
-		padding: 4px 6px;
+		background: var(--color-british-grey);
+		border: none;
+		border-radius: 0;
+		padding: 8px 10px;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		transition: all 0.2s;
-		color: #6b7280;
+		color: white;
+		flex: 1;
+		border-right: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.control-btn:last-child {
+		border-right: none;
 	}
 
 	.control-btn:hover {
-		background: #e5e7eb;
-		border-color: #9ca3af;
-		color: #374151;
+		background: #555;
 	}
 
 	.control-btn:active {
-		transform: scale(0.95);
+		transform: scale(0.98);
 	}
 
 	.control-btn.insert-btn {
-		background: #dbeafe;
-		border-color: #93c5fd;
-		color: #1e40af;
+		background: var(--color-british-blue);
 	}
 
 	.control-btn.insert-btn:hover {
-		background: #bfdbfe;
-		border-color: #60a5fa;
-		color: #1e3a8a;
+		background: #0052A3;
 	}
 
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
 		.vsm-node {
-			padding: 12px;
-			min-width: 200px;
-			max-width: 280px;
+			min-width: 240px;
+			max-width: 300px;
+		}
+
+		.node-header {
+			padding: 14px 18px;
 		}
 
 		.node-header h3 {
-			font-size: 14px;
+			font-size: 16px;
+			letter-spacing: 1.2px;
 		}
 
 		.constraint-badge {
-			font-size: 12px;
-			padding: 2px 6px;
+			font-size: 11px;
+			padding: 3px 8px;
 		}
 
 		.node-timing {
-			padding: 8px;
-			margin-top: 8px;
+			padding: 18px;
 		}
 
 		.timing-item {
 			font-size: 12px;
-			margin-bottom: 4px;
+			margin-bottom: 10px;
+			padding-bottom: 10px;
+		}
+
+		.label {
+			font-size: 11px;
+		}
+
+		.value {
+			font-size: 16px;
 		}
 
 		.node-dimensions {
-			padding: 8px;
-			margin-top: 8px;
+			padding: 14px 18px;
 			font-size: 11px;
 		}
 
 		.dim-item {
-			margin-bottom: 3px;
+			margin-bottom: 8px;
 		}
 
 		.swimlane-badge {
-			font-size: 11px;
-			padding: 5px 10px;
-			margin-top: 8px;
+			font-size: 12px;
+			padding: 10px 14px;
+		}
+
+		.kaizen-bursts {
+			padding: 14px 18px;
 		}
 
 		.kaizen-burst {
-			padding: 5px 8px;
-			font-size: 11px;
+			font-size: 12px;
 		}
 
 		.burst-icon {
-			font-size: 14px;
+			width: 12px;
+			height: 12px;
+		}
+
+		.burst-text {
+			font-size: 11px;
+		}
+
+		.control-btn {
+			padding: 10px 12px;
 		}
 	}
 </style>

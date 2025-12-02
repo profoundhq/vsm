@@ -109,9 +109,9 @@
 
 <style>
 	.toolbar {
-		background: white;
-		border-bottom: 1px solid var(--color-border);
-		padding: 8px 12px;
+		background: var(--color-british-grey);
+		border-bottom: none;
+		padding: 12px 16px;
 		position: relative;
 		z-index: 10;
 	}
@@ -126,77 +126,84 @@
 	.button-group {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 10px;
 		flex: 1;
 	}
 
 	.add-form {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 10px;
 		flex: 1;
 	}
 
 	.activity-input {
 		flex: 1;
-		padding: 8px 12px;
-		border: 1px solid var(--color-border);
-		border-radius: 6px;
-		font-size: 16px;
-		max-width: 300px;
+		padding: 10px 14px;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
+		font-size: 14px;
+		font-family: 'IBM Plex Sans', sans-serif;
+		max-width: 350px;
+		background: white;
 	}
 
 	.activity-input:focus {
 		outline: none;
-		border-color: var(--color-primary);
+		border-color: var(--color-british-blue);
+		box-shadow: 0 0 0 3px rgba(0, 61, 122, 0.1);
 	}
 
 	.btn {
-		padding: 8px 16px;
+		padding: 10px 20px;
 		border: none;
-		border-radius: 6px;
+		border-radius: 0;
 		cursor: pointer;
 		font-weight: 600;
 		font-size: 13px;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
 		transition: all 0.2s;
 		white-space: nowrap;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.btn-add-stream {
-		background: #10b981;
+		background: var(--color-british-blue);
 		color: white;
 	}
 
 	.btn-add-stream:hover {
-		background: #059669;
+		background: #0052A3;
 	}
 
 	.btn-add {
-		background: var(--color-primary);
+		background: var(--color-british-blue);
 		color: white;
 	}
 
 	.btn-add:hover {
-		background: #3a7bc8;
+		background: #0052A3;
 	}
 
 	.btn-primary {
-		background: var(--color-primary);
+		background: var(--color-british-blue);
 		color: white;
 	}
 
 	.btn-primary:hover {
-		background: #3a7bc8;
+		background: #0052A3;
 	}
 
 	.btn-secondary {
-		background: var(--color-bg-1);
-		color: var(--color-text);
-		border: 1px solid var(--color-border);
+		background: transparent;
+		color: white;
+		border: 2px solid rgba(255, 255, 255, 0.5);
 	}
 
 	.btn-secondary:hover {
-		background: #e8e8e8;
+		background: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.8);
 	}
 
 	.toolbar-info {
@@ -207,28 +214,53 @@
 
 	.activity-count {
 		font-size: 12px;
-		color: #666;
-		font-weight: 500;
+		color: white;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
 	}
 
 	/* Mobile optimization */
 	@media (max-width: 480px) {
 		.toolbar {
-			padding: 6px 10px;
+			padding: 10px 12px;
 		}
 
 		.btn {
-			padding: 6px 12px;
-			font-size: 12px;
+			padding: 8px 14px;
+			font-size: 11px;
+			letter-spacing: 0.3px;
 		}
 
 		.activity-input {
-			font-size: 16px;
-			padding: 6px 10px;
+			font-size: 14px;
+			padding: 8px 12px;
 		}
 
 		.activity-count {
 			font-size: 11px;
+		}
+	}
+
+	/* Desktop styles */
+	@media (min-width: 768px) {
+		.toolbar {
+			padding: 16px 24px;
+		}
+
+		.btn {
+			padding: 12px 24px;
+			font-size: 14px;
+			letter-spacing: 0.75px;
+		}
+
+		.activity-input {
+			font-size: 16px;
+			padding: 12px 16px;
+		}
+
+		.activity-count {
+			font-size: 13px;
 		}
 	}
 </style>

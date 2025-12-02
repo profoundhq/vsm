@@ -248,7 +248,7 @@
 		flex: 1;
 		min-height: 0;
 		position: relative;
-		background: #fafafa;
+		background: var(--color-british-cream);
 	}
 
 	.stream-prompt {
@@ -256,27 +256,34 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background: #fafafa;
+		background: var(--color-british-cream);
 		padding: 20px;
 	}
 
 	.prompt-content {
-		max-width: 500px;
+		max-width: 600px;
 		width: 100%;
 		text-align: center;
+		background: white;
+		padding: 30px 20px;
+		border: 3px solid var(--color-british-blue);
+		border-left: 8px solid var(--color-british-gold);
 	}
 
 	.prompt-content h2 {
-		font-size: 24px;
-		color: #111827;
+		font-size: 20px;
+		color: var(--color-british-blue);
 		margin-bottom: 12px;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 1px;
+		text-transform: uppercase;
 	}
 
 	.prompt-content p {
-		font-size: 14px;
-		color: #6b7280;
+		font-size: 13px;
+		color: #6B6B6B;
 		margin-bottom: 24px;
+		letter-spacing: 0.5px;
 	}
 
 	.input-group {
@@ -288,38 +295,42 @@
 	.stream-input {
 		width: 100%;
 		padding: 12px 16px;
-		border: 2px solid #d1d5db;
-		border-radius: 8px;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
 		font-size: 16px;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: border-color 0.2s;
+		background: white;
 	}
 
 	.stream-input:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		border-color: var(--color-british-blue);
+		box-shadow: 0 0 0 3px rgba(0, 61, 122, 0.1);
 	}
 
 	.create-btn {
-		padding: 12px 24px;
-		background: #10b981;
+		padding: 14px 28px;
+		background: var(--color-british-blue);
 		color: white;
 		border: none;
-		border-radius: 8px;
-		font-size: 16px;
+		border-radius: 0;
+		font-size: 14px;
 		font-weight: 600;
+		letter-spacing: 1px;
+		text-transform: uppercase;
 		cursor: pointer;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: all 0.2s;
 	}
 
 	.create-btn:hover {
-		background: #059669;
-		transform: translateY(-1px);
-		box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+		background: #0052A3;
+		box-shadow: 0 4px 12px rgba(0, 61, 122, 0.3);
 	}
 
 	.create-btn:active {
-		transform: translateY(0);
+		transform: translateY(1px);
 	}
 
 	.empty-state {
@@ -344,7 +355,7 @@
 	}
 
 	:global(.svelte-flow) {
-		background: #fafafa;
+		background: var(--color-british-cream);
 	}
 
 	:global(.svelte-flow__node) {
@@ -411,12 +422,18 @@
 
 	/* Tablet and desktop */
 	@media (min-width: 768px) {
+		.prompt-content {
+			padding: 40px 30px;
+		}
+
 		.prompt-content h2 {
-			font-size: 32px;
+			font-size: 28px;
+			letter-spacing: 1.5px;
 		}
 
 		.prompt-content p {
-			font-size: 16px;
+			font-size: 15px;
+			letter-spacing: 0.75px;
 		}
 
 		.input-group {
@@ -425,10 +442,25 @@
 
 		.stream-input {
 			flex: 1;
+			font-size: 18px;
 		}
 
 		.create-btn {
 			flex-shrink: 0;
+			padding: 14px 32px;
+			font-size: 16px;
+		}
+	}
+
+	@media (min-width: 1024px) {
+		.prompt-content h2 {
+			font-size: 32px;
+			letter-spacing: 2px;
+		}
+
+		.prompt-content p {
+			font-size: 16px;
+			letter-spacing: 1px;
 		}
 
 		.empty-state h2 {

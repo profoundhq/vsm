@@ -4,7 +4,40 @@
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 		%sveltekit.head%
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			:root {
+				/* British Rail Color Scheme */
+				--color-british-blue: #003D7A;
+				--color-british-gold: #FFD700;
+				--color-british-cream: #FFF8DC;
+				--color-british-grey: #6B6B6B;
+				--color-british-red: #E60000;
+				--color-british-green: #00A86B;
+
+				/* Legacy mappings */
+				--color-primary: #003D7A;
+				--color-secondary: #0052A3;
+				--color-bg-1: #FFF8DC;
+				--color-border: #003D7A;
+				--color-constraint: #E60000;
+			}
+
+			body {
+				font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+				background: var(--color-british-cream);
+				color: #333;
+			}
+		</style>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

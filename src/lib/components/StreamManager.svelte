@@ -147,23 +147,25 @@
 	}
 
 	.stream-button {
-		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
-		padding: 8px 12px;
+		background: rgba(255, 255, 255, 0.15);
+		border: none;
+		border-radius: 0;
+		padding: 8px 14px;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		font-size: 0.875rem;
-		color: #374151;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		color: white;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: all 0.2s;
 		min-width: 160px;
 	}
 
 	.stream-button:hover {
-		background: #f9fafb;
-		border-color: #d1d5db;
+		background: rgba(255, 255, 255, 0.25);
 	}
 
 	.stream-name {
@@ -182,9 +184,9 @@
 	.menu {
 		position: fixed;
 		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		border: 3px solid var(--color-british-blue);
+		border-radius: 0;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 		min-width: 280px;
 		max-width: 320px;
 		max-height: 400px;
@@ -197,17 +199,19 @@
 	}
 
 	.section-header {
-		padding: 8px 16px;
+		padding: 12px 16px;
 		font-size: 0.75rem;
-		font-weight: 600;
+		font-weight: 700;
 		text-transform: uppercase;
-		color: #6b7280;
-		letter-spacing: 0.05em;
+		color: white;
+		letter-spacing: 0.5px;
+		background: var(--color-british-blue);
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.stream-item {
 		width: 100%;
-		padding: 10px 16px;
+		padding: 12px 16px;
 		border: none;
 		background: white;
 		text-align: left;
@@ -217,15 +221,21 @@
 		justify-content: space-between;
 		gap: 8px;
 		transition: background 0.15s;
+		border-bottom: 1px solid #E0E0E0;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.stream-item:hover {
-		background: #f3f4f6;
+		background: var(--color-british-cream);
 	}
 
 	.stream-item.active {
-		background: #eff6ff;
-		color: #2563eb;
+		background: var(--color-british-blue);
+		color: white;
+	}
+
+	.stream-item.active .stream-count {
+		color: rgba(255, 255, 255, 0.8);
 	}
 
 	.stream-info {
@@ -253,9 +263,9 @@
 		padding: 4px;
 		border: none;
 		background: transparent;
-		color: #ef4444;
+		color: var(--color-british-red);
 		cursor: pointer;
-		border-radius: 4px;
+		border-radius: 0;
 		display: flex;
 		align-items: center;
 		opacity: 0.6;
@@ -264,51 +274,57 @@
 
 	.delete-btn:hover {
 		opacity: 1;
-		background: rgba(239, 68, 68, 0.1);
+		background: rgba(230, 0, 0, 0.1);
 	}
 
 	.menu-divider {
-		height: 1px;
-		background: #e5e7eb;
-		margin: 4px 0;
+		height: 2px;
+		background: var(--color-british-blue);
+		margin: 0;
 	}
 
 	.new-stream-btn {
 		width: 100%;
-		padding: 10px 16px;
+		padding: 12px 16px;
 		border: none;
-		background: white;
-		color: #3b82f6;
+		background: var(--color-british-grey);
+		color: white;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		gap: 8px;
 		font-size: 0.875rem;
-		font-weight: 500;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: background 0.15s;
 	}
 
 	.new-stream-btn:hover {
-		background: #f3f4f6;
+		background: #555;
 	}
 
 	.new-stream-form {
 		padding: 16px;
+		background: var(--color-british-cream);
 	}
 
 	.new-stream-form input {
 		width: 100%;
-		padding: 8px 12px;
-		border: 1px solid #d1d5db;
-		border-radius: 6px;
+		padding: 10px 14px;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
 		font-size: 1rem;
+		font-family: 'IBM Plex Sans', sans-serif;
 		margin-bottom: 12px;
+		background: white;
 	}
 
 	.new-stream-form input:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		border-color: var(--color-british-blue);
+		box-shadow: 0 0 0 3px rgba(0, 61, 122, 0.1);
 	}
 
 	.form-actions {
@@ -318,31 +334,36 @@
 	}
 
 	.form-actions button {
-		padding: 6px 12px;
+		padding: 8px 16px;
 		border: none;
-		border-radius: 4px;
+		border-radius: 0;
 		font-size: 0.875rem;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		text-transform: uppercase;
+		font-family: 'IBM Plex Sans', sans-serif;
 		cursor: pointer;
 		transition: all 0.15s;
 	}
 
 	.btn-cancel {
 		background: white;
-		color: #6b7280;
-		border: 1px solid #d1d5db;
+		color: var(--color-british-grey);
+		border: 2px solid var(--color-british-grey);
 	}
 
 	.btn-cancel:hover {
-		background: #f9fafb;
+		background: var(--color-british-grey);
+		color: white;
 	}
 
 	.btn-create {
-		background: #3b82f6;
+		background: var(--color-british-blue);
 		color: white;
 	}
 
 	.btn-create:hover {
-		background: #2563eb;
+		background: #0052A3;
 	}
 
 	@media (max-width: 768px) {

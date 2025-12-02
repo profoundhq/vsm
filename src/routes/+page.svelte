@@ -79,8 +79,11 @@
 		<header class="app-header">
 			<div class="header-content">
 				<div class="title-section">
-					<h1>Throughline</h1>
-					<p class="subtitle">Build your value stream map backwards from the end</p>
+					<div class="logo">
+						<span class="double-arrow">→←</span>
+						<h1>THROUGHLINE</h1>
+					</div>
+					<p class="subtitle">VISUALISING YOUR DELIVERY PIPELINE</p>
 				</div>
 				<div class="header-actions">
 					<StreamManager />
@@ -90,13 +93,13 @@
 							<line x1="3" y1="12" x2="21" y2="12" />
 							<line x1="3" y1="18" x2="21" y2="18" />
 						</svg>
-						Menu
+						MENU
 					</button>
 					<button class="present-button" on:click={enterPresentationMode}>
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 							<path d="M8 5v14l11-7z"/>
 						</svg>
-						Present
+						PRESENT
 					</button>
 				</div>
 			</div>
@@ -140,13 +143,14 @@
 	}
 
 	.app-header {
-		background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+		background: var(--color-british-blue);
 		color: white;
 		padding: 8px 12px;
 		padding-top: max(8px, env(safe-area-inset-top));
 		padding-left: max(12px, env(safe-area-inset-left));
 		padding-right: max(12px, env(safe-area-inset-right));
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+		border-bottom: 6px solid var(--color-british-gold);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 		flex-shrink: 0;
 		overflow-x: auto;
 	}
@@ -162,14 +166,31 @@
 		min-width: 0;
 	}
 
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.double-arrow {
+		font-size: 24px;
+		font-weight: bold;
+		letter-spacing: -5px;
+	}
+
 	.title-section h1 {
 		margin: 0;
 		font-size: 16px;
 		font-weight: 700;
+		letter-spacing: 1px;
 	}
 
 	.subtitle {
 		display: none;
+		font-size: 10px;
+		opacity: 0.9;
+		letter-spacing: 0.5px;
+		margin-top: 4px;
 	}
 
 	.header-actions {
@@ -182,33 +203,35 @@
 	.menu-button,
 	.present-button {
 		padding: 6px 10px;
-		background: rgba(255, 255, 255, 0.2);
-		border: 1px solid rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.15);
+		border: none;
 		color: white;
-		border-radius: 6px;
+		border-radius: 0;
 		cursor: pointer;
 		font-weight: 600;
 		font-size: 11px;
+		letter-spacing: 0.5px;
 		transition: background 0.2s;
 		white-space: nowrap;
 		flex-shrink: 0;
 		display: flex;
 		align-items: center;
 		gap: 6px;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.menu-button:hover,
 	.present-button:hover {
-		background: rgba(255, 255, 255, 0.3);
+		background: rgba(255, 255, 255, 0.25);
 	}
 
 	.present-button {
-		background: rgba(255, 215, 0, 0.3);
-		border-color: rgba(255, 215, 0, 0.5);
+		background: var(--color-british-gold);
+		color: var(--color-british-blue);
 	}
 
 	.present-button:hover {
-		background: rgba(255, 215, 0, 0.4);
+		background: #FFE44D;
 	}
 
 	/* Presentation Mode Styles */
@@ -295,47 +318,64 @@
 	/* Desktop styles */
 	@media (min-width: 768px) {
 		.app-header {
-			padding: 12px 16px;
-			padding-top: max(12px, env(safe-area-inset-top));
-			padding-left: max(16px, env(safe-area-inset-left));
-			padding-right: max(16px, env(safe-area-inset-right));
+			padding: 16px 24px;
+			padding-top: max(16px, env(safe-area-inset-top));
+			padding-left: max(24px, env(safe-area-inset-left));
+			padding-right: max(24px, env(safe-area-inset-right));
+			border-bottom: 8px solid var(--color-british-gold);
+		}
+
+		.double-arrow {
+			font-size: 36px;
+			letter-spacing: -8px;
 		}
 
 		.title-section h1 {
-			font-size: 20px;
+			font-size: 22px;
+			letter-spacing: 1.5px;
 		}
 
 		.subtitle {
-			font-size: 13px;
+			display: block;
+			font-size: 11px;
 		}
 
 		.menu-button,
 		.present-button {
-			padding: 6px 12px;
+			padding: 8px 14px;
 			font-size: 12px;
+			letter-spacing: 0.75px;
 		}
 	}
 
 	@media (min-width: 1024px) {
 		.app-header {
-			padding: 16px 24px;
-			padding-top: max(16px, env(safe-area-inset-top));
-			padding-left: max(24px, env(safe-area-inset-left));
-			padding-right: max(24px, env(safe-area-inset-right));
+			padding: 20px 40px;
+			padding-top: max(20px, env(safe-area-inset-top));
+			padding-left: max(40px, env(safe-area-inset-left));
+			padding-right: max(40px, env(safe-area-inset-right));
+		}
+
+		.double-arrow {
+			font-size: 48px;
+			letter-spacing: -10px;
 		}
 
 		.title-section h1 {
-			font-size: 24px;
+			font-size: 28px;
+			letter-spacing: 2px;
 		}
 
 		.subtitle {
-			font-size: 14px;
+			font-size: 13px;
+			letter-spacing: 1px;
 		}
 
 		.menu-button,
 		.present-button {
-			padding: 8px 16px;
+			padding: 10px 20px;
 			font-size: 14px;
+			letter-spacing: 1px;
 		}
 	}
 </style>
