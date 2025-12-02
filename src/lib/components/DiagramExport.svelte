@@ -181,20 +181,21 @@
 		class="export-button"
 		on:click|stopPropagation={toggleMenu}
 		disabled={isExporting}
-		aria-label="Export diagram"
+		aria-label="Export diagram as image"
 	>
 		{#if isExporting}
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinner">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spinner">
 				<circle cx="12" cy="12" r="10" opacity="0.25" />
 				<path d="M12 2a10 10 0 0 1 10 10" opacity="0.75" />
 			</svg>
 		{:else}
-			<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 				<rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
 				<circle cx="8.5" cy="8.5" r="1.5" />
 				<polyline points="21 15 16 10 5 21" />
 			</svg>
 		{/if}
+		<span>Diagram Image</span>
 	</button>
 
 	{#if showMenu}
@@ -227,18 +228,21 @@
 	}
 
 	.export-button {
-		background: rgba(0, 61, 122, 0.1);
+		width: 100%;
+		background: white;
 		border: 2px solid var(--color-british-blue);
 		border-radius: 0;
-		padding: 8px 10px;
+		padding: 12px 16px;
 		cursor: pointer;
 		color: var(--color-british-blue);
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 12px;
 		font-size: 0.875rem;
 		font-weight: 600;
 		font-family: 'IBM Plex Sans', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 		transition: all 0.2s;
 	}
 

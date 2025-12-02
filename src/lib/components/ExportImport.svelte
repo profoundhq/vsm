@@ -50,12 +50,14 @@
 <svelte:window on:click={closeMenu} />
 
 <div class="export-import">
-	<button class="menu-button" on:click|stopPropagation={toggleMenu} aria-label="Export/Import menu">
-		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-			<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-			<polyline points="7 10 12 15 17 10" />
-			<line x1="12" y1="15" x2="12" y2="3" />
+	<button class="menu-button" on:click|stopPropagation={toggleMenu} aria-label="Export/Import VSM Data">
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+			<polyline points="14 2 14 8 20 8" />
+			<circle cx="10" cy="12" r="2" />
+			<path d="M12 12h6" />
 		</svg>
+		<span>VSM Data (JSON)</span>
 	</button>
 
 	{#if showMenu}
@@ -94,22 +96,27 @@
 	}
 
 	.menu-button {
-		background: rgba(59, 130, 246, 0.1);
-		border: 1px solid rgba(59, 130, 246, 0.3);
-		border-radius: 6px;
-		padding: 8px 10px;
+		width: 100%;
+		background: white;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
+		padding: 12px 16px;
 		cursor: pointer;
-		color: #3b82f6;
+		color: var(--color-british-blue);
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 12px;
 		font-size: 0.875rem;
+		font-weight: 600;
+		font-family: 'IBM Plex Sans', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 		transition: all 0.2s;
 	}
 
 	.menu-button:hover {
-		background: rgba(59, 130, 246, 0.2);
-		border-color: rgba(59, 130, 246, 0.5);
+		background: var(--color-british-blue);
+		color: white;
 	}
 
 	.menu {

@@ -5,7 +5,12 @@
 <div class="end-node">
 	<Handle type="target" position={Position.Left} />
 	<div class="icon-circle">
-		<span class="icon">😀</span>
+		<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<circle cx="12" cy="12" r="10" />
+			<path d="M8 14s1.5 2 4 2 4-2 4-2" />
+			<line x1="9" y1="9" x2="9.01" y2="9" />
+			<line x1="15" y1="9" x2="15.01" y2="9" />
+		</svg>
 	</div>
 	<div class="label">END</div>
 </div>
@@ -31,7 +36,9 @@
 	}
 
 	.icon {
-		font-size: 48px;
+		width: 48px;
+		height: 48px;
+		color: white;
 	}
 
 	.label {
@@ -53,7 +60,8 @@
 		}
 
 		.icon {
-			font-size: 56px;
+			width: 56px;
+			height: 56px;
 		}
 
 		.label {

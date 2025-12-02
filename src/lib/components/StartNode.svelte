@@ -4,7 +4,11 @@
 
 <div class="start-node">
 	<div class="icon-circle">
-		<span class="icon">💡</span>
+		<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<path d="M9 18h6" />
+			<path d="M10 22h4" />
+			<path d="M12 2a7 7 0 0 1 7 7c0 2-1 3.5-2 4.5L15 16H9l-2-2.5C6 12.5 5 11 5 9a7 7 0 0 1 7-7z" />
+		</svg>
 	</div>
 	<div class="label">START</div>
 	<Handle type="source" position={Position.Right} />
@@ -31,7 +35,9 @@
 	}
 
 	.icon {
-		font-size: 48px;
+		width: 48px;
+		height: 48px;
+		color: var(--color-british-blue);
 	}
 
 	.label {
@@ -53,7 +59,8 @@
 		}
 
 		.icon {
-			font-size: 56px;
+			width: 56px;
+			height: 56px;
 		}
 
 		.label {

@@ -391,7 +391,7 @@
 			<line x1="12" y1="18" x2="12" y2="12" />
 			<line x1="9" y1="15" x2="15" y2="15" />
 		</svg>
-		Bulk Update
+		Activities (CSV/YAML)
 	</button>
 
 	{#if showMenu}
@@ -503,23 +503,27 @@
 	}
 
 	.bulk-button {
+		width: 100%;
 		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 6px;
-		padding: 8px 12px;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
+		padding: 12px 16px;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 12px;
 		font-size: 0.875rem;
-		color: #374151;
+		color: var(--color-british-blue);
 		transition: all 0.2s;
-		font-weight: 500;
+		font-weight: 600;
+		font-family: 'IBM Plex Sans', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 
 	.bulk-button:hover {
-		background: #f9fafb;
-		border-color: #d1d5db;
+		background: var(--color-british-blue);
+		color: white;
 	}
 
 	.menu {

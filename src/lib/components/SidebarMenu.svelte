@@ -38,11 +38,11 @@
 
 	<div class="sidebar-content">
 		<section class="menu-section">
-			<h3 class="section-title">Data Management</h3>
+			<h3 class="section-title">Export / Import</h3>
 			<div class="menu-items">
+				<DiagramExport />
 				<BulkUpdate />
 				<ExportImport />
-				<DiagramExport />
 			</div>
 		</section>
 
