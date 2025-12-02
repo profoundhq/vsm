@@ -108,7 +108,9 @@
 			{#if !presentationMode}
 				<NodeToolbar />
 			{/if}
-			<VSMFlow />
+			<div class="flow-container">
+				<VSMFlow />
+			</div>
 		</main>
 	</div>
 
@@ -255,9 +257,17 @@
 
 	.flow-panel {
 		flex: 1;
-		overflow: auto;
+		display: flex;
+		flex-direction: column;
 		position: relative;
 		min-height: 0;
+		overflow: hidden;
+	}
+
+	.flow-container {
+		flex: 1;
+		min-height: 0;
+		position: relative;
 	}
 
 	/* Tablet styles */
