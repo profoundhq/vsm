@@ -205,38 +205,42 @@
 	/* Mobile-first design */
 	.timeline-container {
 		background: white;
-		border-top: 2px solid var(--color-border);
+		border-top: 3px solid var(--color-british-blue);
 		overflow: hidden;
 	}
 
 	.timeline-container.collapsed {
-		border-top: 1px solid var(--color-border);
+		border-top: 2px solid var(--color-british-blue);
 	}
 
 	.timeline-header {
 		width: 100%;
-		background: #f8f9fa;
+		background: var(--color-british-blue);
+		color: white;
 		border: none;
+		border-bottom: 3px solid var(--color-british-gold);
 		padding: 14px 16px;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		cursor: pointer;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: all 0.2s;
 		gap: 12px;
 	}
 
 	.timeline-header:hover {
-		background: #f0f1f3;
+		background: #0052A3;
 	}
 
 	.timeline-container.collapsed .timeline-header {
-		background: #e8eaed;
+		background: var(--color-british-blue);
+		border-bottom-width: 2px;
 		padding: 16px;
 	}
 
 	.timeline-container.collapsed .timeline-header:hover {
-		background: #dfe1e5;
+		background: #0052A3;
 	}
 
 	.header-left {
@@ -270,8 +274,10 @@
 	.timeline-header h3 {
 		margin: 0;
 		font-size: 15px;
-		font-weight: 600;
-		color: #333;
+		font-weight: 700;
+		color: white;
+		letter-spacing: 1px;
+		text-transform: uppercase;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -282,7 +288,8 @@
 	.timeline-container.collapsed .timeline-header h3 {
 		font-size: 16px !important;
 		font-weight: 700 !important;
-		color: #1a1a1a !important;
+		letter-spacing: 1.2px !important;
+		color: white !important;
 		flex: 1 1 auto !important;
 		overflow: visible !important;
 		white-space: normal !important;
@@ -293,8 +300,9 @@
 		display: none;
 		gap: 12px;
 		font-size: 12px;
-		color: #666;
+		color: rgba(255, 255, 255, 0.9);
 		flex-shrink: 0;
+		letter-spacing: 0.5px;
 	}
 
 	.timeline-container:not(.collapsed) .header-stats {
@@ -306,63 +314,86 @@
 	}
 
 	.quick-stat strong {
-		color: var(--color-primary);
+		color: var(--color-british-gold);
 	}
 
 	/* Statistics Grid */
 	.stats-grid {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
-		gap: 12px;
-		padding: 16px;
-		border-bottom: 1px solid #e5e7eb;
+		gap: 0;
+		padding: 0;
+		border-bottom: 2px solid var(--color-british-blue);
+		background: var(--color-british-cream);
 	}
 
 	.stat-card {
-		background: #f8f9fa;
-		padding: 14px 12px;
-		border-radius: 8px;
+		background: white;
+		padding: 16px 14px;
+		border-radius: 0;
 		text-align: center;
-		border: 2px solid transparent;
+		border: 2px solid var(--color-british-blue);
+		border-left-width: 0;
+		border-top-width: 0;
+		font-family: 'IBM Plex Sans', sans-serif;
 		transition: all 0.2s;
 	}
 
+	.stat-card:nth-child(2n+1) {
+		border-left-width: 2px;
+	}
+
 	.stat-card:hover {
-		transform: translateY(-2px);
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		background: var(--color-british-cream);
 	}
 
 	.stat-card.highlight {
-		background: #f0f7ff;
-		border-color: var(--color-primary);
+		background: var(--color-british-blue);
+		color: white;
+		border-left-width: 8px;
+		border-left-color: var(--color-british-gold);
+	}
+
+	.stat-card.highlight .stat-value {
+		color: white;
+	}
+
+	.stat-card.highlight .stat-label,
+	.stat-card.highlight .stat-help {
+		color: rgba(255, 255, 255, 0.9);
 	}
 
 	.stat-card.warning {
-		background: #fff5f5;
-		border-color: var(--color-constraint);
+		background: #FFF5F5;
+		border-left-width: 8px;
+		border-left-color: var(--color-british-red);
 	}
 
 	.stat-value {
-		font-size: 24px;
+		font-size: 28px;
 		font-weight: 700;
-		color: #333;
-		margin-bottom: 6px;
+		color: var(--color-british-blue);
+		margin-bottom: 8px;
 		line-height: 1;
+		letter-spacing: 0.5px;
 	}
 
 	.stat-value .unit {
 		font-size: 14px;
 		font-weight: 600;
-		color: #666;
+		color: var(--color-british-grey);
 		margin-left: 2px;
+		letter-spacing: 0.3px;
 	}
 
 	.stat-label {
 		font-size: 11px;
-		color: #666;
-		font-weight: 600;
+		color: var(--color-british-grey);
+		font-weight: 700;
 		line-height: 1.3;
 		margin-bottom: 4px;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 
 	.stat-help {
@@ -370,21 +401,26 @@
 		color: #999;
 		font-weight: 400;
 		line-height: 1.2;
+		letter-spacing: 0.3px;
 	}
 
 	/* Timeline Visual */
 	.timeline-visual {
-		padding: 16px;
-		background: #fafafa;
+		padding: 20px;
+		background: white;
+		border-top: 2px solid var(--color-british-blue);
 	}
 
 	.timeline-title {
-		font-size: 12px;
-		font-weight: 600;
-		color: #666;
-		margin-bottom: 12px;
+		font-size: 11px;
+		font-weight: 700;
+		color: white;
+		background: var(--color-british-grey);
+		padding: 8px 12px;
+		margin: -20px -20px 16px -20px;
 		text-transform: uppercase;
-		letter-spacing: 0.5px;
+		letter-spacing: 1px;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.timeline-activities {
@@ -401,56 +437,65 @@
 
 	.activity-name {
 		font-size: 12px;
-		font-weight: 600;
-		color: #333;
+		font-weight: 700;
+		color: var(--color-british-blue);
+		letter-spacing: 0.5px;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.activity-bar-container {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 12px;
 	}
 
 	.activity-bar {
 		display: flex;
-		height: 32px;
-		min-width: 60px;
-		border-radius: 4px;
+		height: 36px;
+		min-width: 80px;
+		border-radius: 0;
 		overflow: hidden;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		border: 2px solid var(--color-british-blue);
+		box-shadow: none;
 	}
 
 	.process-time {
-		background: var(--color-primary);
+		background: var(--color-british-green);
 		color: white;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-size: 11px;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 0.3px;
+		font-family: 'IBM Plex Sans', sans-serif;
 		position: relative;
 	}
 
 	.wait-time {
-		background: #fbbf24;
+		background: var(--color-british-gold);
 		color: #78350f;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-size: 11px;
-		font-weight: 600;
+		font-weight: 700;
+		letter-spacing: 0.3px;
+		font-family: 'IBM Plex Sans', sans-serif;
 		flex: 1;
 	}
 
 	.bar-label {
-		padding: 0 6px;
+		padding: 0 8px;
 		white-space: nowrap;
 	}
 
 	.total-time {
 		font-size: 11px;
-		font-weight: 600;
-		color: #666;
+		font-weight: 700;
+		color: var(--color-british-blue);
+		letter-spacing: 0.3px;
+		font-family: 'IBM Plex Sans', sans-serif;
 		white-space: nowrap;
 		flex-shrink: 0;
 	}
