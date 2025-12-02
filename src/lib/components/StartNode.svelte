@@ -4,12 +4,9 @@
 
 <div class="start-node">
 	<div class="icon-circle">
-		<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
-			<circle cx="12" cy="12" r="10" />
-			<polyline points="12 6 12 12 16 14" />
-		</svg>
+		<span class="icon">💡</span>
 	</div>
-	<div class="label">DEPARTURE</div>
+	<div class="label">START</div>
 	<Handle type="source" position={Position.Right} />
 </div>
 
@@ -34,7 +31,7 @@
 	}
 
 	.icon {
-		color: var(--color-british-blue);
+		font-size: 48px;
 	}
 
 	.label {
@@ -56,8 +53,7 @@
 		}
 
 		.icon {
-			width: 56px;
-			height: 56px;
+			font-size: 56px;
 		}
 
 		.label {

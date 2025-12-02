@@ -83,12 +83,13 @@
 		right: -320px;
 		width: 320px;
 		height: 100vh;
-		background: white;
+		background: var(--color-british-cream);
 		z-index: 1000;
 		display: flex;
 		flex-direction: column;
 		box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 		transition: right 0.3s ease-out;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.sidebar.open {
@@ -97,7 +98,8 @@
 
 	.sidebar-header {
 		padding: 20px;
-		border-bottom: 1px solid #e5e7eb;
+		background: var(--color-british-blue);
+		border-bottom: 4px solid var(--color-british-gold);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -107,8 +109,10 @@
 	.sidebar-header h2 {
 		margin: 0;
 		font-size: 1.25rem;
-		color: #111827;
+		color: white;
 		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 1.5px;
 	}
 
 	.close-btn {
@@ -116,8 +120,8 @@
 		border: none;
 		cursor: pointer;
 		padding: 4px;
-		border-radius: 4px;
-		color: #6b7280;
+		border-radius: 0;
+		color: var(--color-british-gold);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -125,8 +129,8 @@
 	}
 
 	.close-btn:hover {
-		background: #f3f4f6;
-		color: #111827;
+		background: rgba(255, 215, 0, 0.1);
+		color: white;
 	}
 
 	.sidebar-content {
@@ -136,8 +140,8 @@
 	}
 
 	.menu-section {
-		padding: 12px 20px;
-		border-bottom: 1px solid #e5e7eb;
+		padding: 16px 20px;
+		border-bottom: 2px solid var(--color-british-blue);
 	}
 
 	.menu-section:last-child {
@@ -146,10 +150,10 @@
 
 	.section-title {
 		font-size: 0.75rem;
-		font-weight: 600;
-		color: #6b7280;
+		font-weight: 700;
+		color: var(--color-british-blue);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 1px;
 		margin: 0 0 12px 0;
 	}
 
@@ -163,33 +167,35 @@
 		width: 100%;
 		padding: 12px 16px;
 		background: white;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
+		border: 2px solid var(--color-british-blue);
+		border-radius: 0;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		color: #374151;
+		color: var(--color-british-blue);
 		font-size: 0.875rem;
-		font-weight: 500;
+		font-weight: 600;
 		transition: all 0.2s;
 		text-align: left;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
 	}
 
 	.menu-item:hover {
-		background: #f9fafb;
-		border-color: #d1d5db;
+		background: var(--color-british-blue);
+		color: white;
 	}
 
 	.menu-item.danger {
-		color: #dc2626;
-		border-color: #fecaca;
-		background: #fef2f2;
+		color: var(--color-british-red);
+		border-color: var(--color-british-red);
+		background: white;
 	}
 
 	.menu-item.danger:hover {
-		background: #fee2e2;
-		border-color: #fca5a5;
+		background: var(--color-british-red);
+		color: white;
 	}
 
 	/* Mobile adjustments */
