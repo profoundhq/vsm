@@ -33,9 +33,9 @@
 		width: 18px;
 		height: 18px;
 		border-radius: 50%;
-		background: #e0e7ff;
-		color: #4f46e5;
-		border: 1px solid #c7d2fe;
+		background: white;
+		color: var(--color-british-blue);
+		border: 2px solid var(--color-british-blue);
 		font-size: 12px;
 		font-weight: 700;
 		cursor: help;
@@ -45,40 +45,43 @@
 		transition: all 0.2s;
 		padding: 0;
 		line-height: 1;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.help-icon:hover {
-		background: #c7d2fe;
-		border-color: #a5b4fc;
+		background: var(--color-british-blue);
+		color: white;
 	}
 
 	.tooltip {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
-		bottom: calc(100% + 8px);
-		background: #1f2937;
+		top: calc(100% + 8px);
+		background: var(--color-british-blue);
 		color: white;
 		padding: 10px 14px;
-		border-radius: 8px;
+		border-radius: 0;
+		border: 2px solid var(--color-british-gold);
 		font-size: 13px;
 		line-height: 1.5;
 		white-space: normal;
 		width: 280px;
 		max-width: 90vw;
 		box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-		z-index: 1000;
+		z-index: 10000;
 		pointer-events: none;
+		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.tooltip::after {
 		content: '';
 		position: absolute;
-		top: 100%;
+		bottom: 100%;
 		left: 50%;
 		transform: translateX(-50%);
 		border: 6px solid transparent;
-		border-top-color: #1f2937;
+		border-bottom-color: var(--color-british-gold);
 	}
 
 	/* Mobile adjustments */
