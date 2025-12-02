@@ -5,6 +5,7 @@
 		Controls,
 		Background,
 		BackgroundVariant,
+		Panel,
 		type Node,
 		type Edge
 	} from '@xyflow/svelte';
@@ -212,6 +213,10 @@
 					</button>
 				</Controls>
 				<Background variant={BackgroundVariant.Dots} />
+
+				<Panel position="bottom">
+					<VSMTimeline />
+				</Panel>
 			</SvelteFlow>
 
 			{#if $vsmStore.stream.activities.length === 0}
@@ -221,8 +226,6 @@
 				</div>
 			{/if}
 		</div>
-
-		<VSMTimeline />
 	{/if}
 </div>
 
@@ -418,6 +421,21 @@
 	:global(.svelte-flow__controls) .edit-mode-btn.active:hover {
 		background: #2563eb;
 		border-color: #2563eb;
+	}
+
+	/* Timeline Panel Styling */
+	:global(.svelte-flow__panel.bottom) {
+		display: flex;
+		justify-content: center;
+		align-items: flex-end;
+		padding: 0 12px 12px 12px;
+		pointer-events: none;
+	}
+
+	:global(.svelte-flow__panel.bottom > *) {
+		pointer-events: auto;
+		max-width: 1400px;
+		width: 100%;
 	}
 
 	/* Tablet and desktop */

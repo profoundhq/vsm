@@ -205,12 +205,14 @@
 	/* Mobile-first design */
 	.timeline-container {
 		background: white;
-		border-top: 3px solid var(--color-british-blue);
+		border: 3px solid var(--color-british-blue);
 		overflow: hidden;
+		max-width: 100%;
+		box-shadow: 0 -4px 12px rgba(0, 61, 122, 0.15);
 	}
 
 	.timeline-container.collapsed {
-		border-top: 2px solid var(--color-british-blue);
+		border-width: 2px;
 	}
 
 	.timeline-header {
