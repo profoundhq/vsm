@@ -386,6 +386,7 @@
 		bottom: auto;
 		right: auto;
 		width: auto;
+		height: auto;
 		max-width: fit-content;
 	}
 
