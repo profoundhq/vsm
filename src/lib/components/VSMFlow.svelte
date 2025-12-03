@@ -381,13 +381,17 @@
 
 	/* Mobile-optimized controls */
 	:global(.svelte-flow__controls) {
-		top: 10px;
-		left: 10px;
-		bottom: auto;
-		right: auto;
-		width: auto;
-		height: auto;
-		max-width: fit-content;
+		position: absolute !important;
+		top: 10px !important;
+		left: 10px !important;
+		bottom: auto !important;
+		right: auto !important;
+		width: auto !important;
+		height: auto !important;
+		max-width: fit-content !important;
+		display: flex !important;
+		flex-direction: column !important;
+		gap: 4px !important;
 	}
 
 	:global(.svelte-flow__controls button) {
@@ -503,9 +507,8 @@
 		}
 
 		:global(.svelte-flow__controls) {
-			top: 20px;
-			left: 20px;
-			right: auto;
+			top: 20px !important;
+			left: 20px !important;
 		}
 
 		:global(.svelte-flow__controls button) {
