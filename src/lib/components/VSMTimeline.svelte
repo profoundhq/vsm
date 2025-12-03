@@ -465,7 +465,7 @@
 
 	/* Timeline Visual - Lead Time Ladder */
 	.timeline-visual {
-		padding: 8px 16px;
+		padding: 6px 12px;
 		background: white;
 		border-top: 2px solid var(--color-british-blue);
 		overflow-x: auto;
@@ -482,14 +482,14 @@
 		font-weight: 700;
 		color: var(--color-british-grey);
 		padding: 0;
-		margin: 0 0 8px 0;
+		margin: 0 0 4px 0;
 		text-transform: uppercase;
 		letter-spacing: 1px;
 		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.ladder-info {
-		margin-bottom: 8px;
+		margin-bottom: 6px;
 	}
 
 	.ladder-summary {
@@ -523,16 +523,16 @@
 
 	.timeline-ladder {
 		position: relative;
-		min-height: 80px;
+		min-height: 70px;
 		width: 100%;
 		display: flex;
 		align-items: flex-end;
-		padding-bottom: 15px;
+		padding-bottom: 10px;
 	}
 
 	.ladder-segment {
 		position: absolute;
-		bottom: 15px;
+		bottom: 10px;
 		transform: translateX(-50%);
 	}
 
@@ -646,19 +646,19 @@
 		}
 
 		.timeline-visual {
-			padding: 20px 24px;
+			padding: 8px 20px;
 		}
 
 		.timeline-title {
-			font-size: 13px;
+			font-size: 10px;
 		}
 
 		.ladder-summary {
-			font-size: 12px;
+			font-size: 11px;
 		}
 
 		.timeline-ladder {
-			min-height: 180px;
+			min-height: 90px;
 		}
 
 		.timeline-bar {
