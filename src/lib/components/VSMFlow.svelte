@@ -426,18 +426,23 @@
 	/* Timeline Panel Styling */
 	:global(.svelte-flow__panel.bottom) {
 		display: flex;
-		justify-content: stretch;
+		justify-content: center;
 		align-items: flex-end;
 		padding: 0;
 		pointer-events: none;
-		width: 100%;
 		left: 0;
 		right: 0;
+		bottom: 0;
 	}
 
 	:global(.svelte-flow__panel.bottom > *) {
 		pointer-events: auto;
-		width: 100%;
+		max-width: 100%;
+	}
+
+	/* Ensure controls stay visible above panel */
+	:global(.svelte-flow__controls) {
+		z-index: 10;
 	}
 
 	/* Tablet and desktop */
