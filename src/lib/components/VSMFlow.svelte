@@ -445,7 +445,9 @@
 	:global(.svelte-flow__controls) {
 		z-index: 10;
 		top: 10px;
+		left: 10px;
 		bottom: auto;
+		width: auto;
 	}
 
 	/* Tablet and desktop */
