@@ -9,6 +9,7 @@
 	let editorContent = '';
 	let errorMessage = '';
 	let previewChanges: { action: 'add' | 'update' | 'delete', activity: VSMActivity }[] = [];
+	let importedConnections: any[] = [];
 
 	$: activities = $vsmStore.stream?.activities || [];
 
@@ -62,18 +63,24 @@
 	}
 
 	function exportToYAML() {
-		const data = activities.map(a => ({
-			name: a.name,
-			processTime: a.processTime,
-			processTimeUnit: a.processTimeUnit,
-			leadTime: a.leadTime,
-			leadTimeUnit: a.leadTimeUnit,
-			dimensions: a.dimensions,
-			metrics: a.metrics,
-			swimlane: a.swimlane,
-			isConstraint: a.isConstraint,
-			kaizenBursts: a.kaizenBursts
-		}));
+		const stream = $vsmStore.stream;
+
+		// Export full stream including connections for branching support
+		const data = {
+			activities: activities.map(a => ({
+				name: a.name,
+				processTime: a.processTime,
+				processTimeUnit: a.processTimeUnit,
+				leadTime: a.leadTime,
+				leadTimeUnit: a.leadTimeUnit,
+				dimensions: a.dimensions,
+				metrics: a.metrics,
+				swimlane: a.swimlane,
+				isConstraint: a.isConstraint,
+				kaizenBursts: a.kaizenBursts
+			})),
+			connections: stream?.connections || []
+		};
 
 		const yamlStr = yaml.dump(data, {
 			indent: 2,
@@ -81,7 +88,7 @@
 			noRefs: true
 		});
 
-		downloadFile(yamlStr, 'vsm-activities.yaml', 'text/yaml');
+		downloadFile(yamlStr, 'vsm-stream.yaml', 'text/yaml');
 		closeMenu();
 	}
 
@@ -115,19 +122,23 @@
 			);
 			editorContent = [headers, ...rows].join('\n');
 		} else {
-			// Generate YAML content for editing
-			const data = activities.map(a => ({
-				name: a.name,
-				processTime: a.processTime,
-				processTimeUnit: a.processTimeUnit,
-				leadTime: a.leadTime,
-				leadTimeUnit: a.leadTimeUnit,
-				dimensions: a.dimensions,
-				metrics: a.metrics,
-				swimlane: a.swimlane,
-				isConstraint: a.isConstraint,
-				kaizenBursts: a.kaizenBursts
-			}));
+			// Generate YAML content for editing (full stream with connections)
+			const stream = $vsmStore.stream;
+			const data = {
+				activities: activities.map(a => ({
+					name: a.name,
+					processTime: a.processTime,
+					processTimeUnit: a.processTimeUnit,
+					leadTime: a.leadTime,
+					leadTimeUnit: a.leadTimeUnit,
+					dimensions: a.dimensions,
+					metrics: a.metrics,
+					swimlane: a.swimlane,
+					isConstraint: a.isConstraint,
+					kaizenBursts: a.kaizenBursts
+				})),
+				connections: stream?.connections || []
+			};
 			editorContent = yaml.dump(data, { indent: 2, lineWidth: -1, noRefs: true });
 		}
 		showEditor = true;
@@ -233,13 +244,28 @@
 		return values;
 	}
 
-	function parseYAML(yamlStr: string): VSMActivity[] {
-		const data = yaml.load(yamlStr) as any[];
-		if (!Array.isArray(data)) {
-			throw new Error('YAML must be an array of activities');
+	function parseYAML(yamlStr: string): { activities: VSMActivity[], connections: any[] } {
+		const data = yaml.load(yamlStr) as any;
+
+		// Support both old format (array) and new format (object with activities/connections)
+		let activitiesData: any[];
+		let connectionsData: any[] = [];
+
+		if (Array.isArray(data)) {
+			// Old format: array of activities
+			activitiesData = data;
+		} else if (data && typeof data === 'object') {
+			// New format: { activities: [...], connections: [...] }
+			if (!Array.isArray(data.activities)) {
+				throw new Error('YAML must have an "activities" array');
+			}
+			activitiesData = data.activities;
+			connectionsData = data.connections || [];
+		} else {
+			throw new Error('YAML must be an array of activities or an object with activities/connections');
 		}
 
-		return data.map((item, idx) => {
+		const activities = activitiesData.map((item, idx) => {
 			if (!item.name) {
 				throw new Error(`Activity ${idx + 1}: name is required`);
 			}
@@ -260,16 +286,25 @@
 
 			return activity;
 		});
+
+		return { activities, connections: connectionsData };
 	}
 
 	function previewImport() {
 		errorMessage = '';
 		previewChanges = [];
+		importedConnections = [];
 
 		try {
-			const importedActivities = format === 'csv'
-				? parseCSV(editorContent)
-				: parseYAML(editorContent);
+			let importedActivities: VSMActivity[];
+
+			if (format === 'csv') {
+				importedActivities = parseCSV(editorContent);
+			} else {
+				const parsed = parseYAML(editorContent);
+				importedActivities = parsed.activities;
+				importedConnections = parsed.connections;
+			}
 
 			// Match imported activities with existing ones
 			importedActivities.forEach(imported => {
@@ -315,6 +350,7 @@
 	function applyChanges() {
 		if (previewChanges.length === 0) return;
 
+		// Apply activity changes
 		previewChanges.forEach(change => {
 			if (change.action === 'add') {
 				vsmStore.addActivity(change.activity);
@@ -325,9 +361,15 @@
 			}
 		});
 
+		// Apply connections if imported (YAML only)
+		if (importedConnections.length > 0) {
+			vsmStore.replaceConnections(importedConnections);
+		}
+
 		showEditor = false;
 		editorContent = '';
 		previewChanges = [];
+		importedConnections = [];
 		errorMessage = '';
 	}
 
@@ -335,6 +377,7 @@
 		showEditor = false;
 		editorContent = '';
 		previewChanges = [];
+		importedConnections = [];
 		errorMessage = '';
 	}
 </script>

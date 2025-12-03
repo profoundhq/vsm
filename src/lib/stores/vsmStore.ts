@@ -404,6 +404,23 @@ function createVSMStore() {
 			});
 		},
 
+		replaceConnections: (connections: VSMConnection[]) => {
+			update(state => {
+				if (!state.stream) return state;
+
+				const updatedStream = {
+					...state.stream,
+					connections
+				};
+
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === updatedStream.id ? updatedStream : s)
+				};
+			});
+		},
+
 		// Chat
 		addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
 			update(state => ({
