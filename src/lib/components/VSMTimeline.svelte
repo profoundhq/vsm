@@ -467,7 +467,7 @@
 
 	/* Timeline Visual - Lead Time Ladder */
 	.timeline-visual {
-		padding: 20px;
+		padding: 12px 16px;
 		background: white;
 		border-top: 2px solid var(--color-british-blue);
 		overflow-x: auto;
@@ -480,26 +480,26 @@
 	}
 
 	.timeline-title {
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: 700;
 		color: white;
 		background: var(--color-british-grey);
-		padding: 8px 12px;
-		margin: -20px -20px 12px -20px;
+		padding: 6px 10px;
+		margin: -12px -16px 10px -16px;
 		text-transform: uppercase;
 		letter-spacing: 1px;
 		font-family: 'IBM Plex Sans', sans-serif;
 	}
 
 	.ladder-info {
-		margin-bottom: 16px;
+		margin-bottom: 10px;
 	}
 
 	.ladder-summary {
 		display: flex;
-		gap: 16px;
+		gap: 12px;
 		flex-wrap: wrap;
-		font-size: 11px;
+		font-size: 10px;
 		color: var(--color-british-grey);
 		font-family: 'IBM Plex Sans', sans-serif;
 	}
@@ -507,12 +507,12 @@
 	.summary-item {
 		display: flex;
 		align-items: center;
-		gap: 6px;
+		gap: 5px;
 	}
 
 	.legend-box {
-		width: 16px;
-		height: 16px;
+		width: 12px;
+		height: 12px;
 		border: 2px solid var(--color-british-blue);
 	}
 
@@ -526,10 +526,10 @@
 
 	.timeline-ladder {
 		position: relative;
-		min-height: 150px;
+		min-height: 100px;
 		width: 100%;
 		border-bottom: 2px solid var(--color-british-blue);
-		padding-bottom: 20px;
+		padding-bottom: 12px;
 	}
 
 	.ladder-segment {
@@ -554,16 +554,16 @@
 	.time-bar.horizontal {
 		background: var(--color-british-gold);
 		border: 2px solid var(--color-british-blue);
-		padding: 6px 12px;
-		min-width: 60px;
+		padding: 4px 10px;
+		min-width: 50px;
 		text-align: center;
 	}
 
 	.time-bar.vertical {
 		background: var(--color-british-green);
 		border: 2px solid var(--color-british-blue);
-		padding: 12px 8px;
-		min-height: 50px;
+		padding: 10px 6px;
+		min-height: 40px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -572,7 +572,7 @@
 	}
 
 	.time-label {
-		font-size: 11px;
+		font-size: 10px;
 		font-weight: 700;
 		color: white;
 		letter-spacing: 0.3px;

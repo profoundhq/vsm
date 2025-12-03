@@ -5,7 +5,9 @@
 	import StreamManager from '$lib/components/StreamManager.svelte';
 	import SidebarMenu from '$lib/components/SidebarMenu.svelte';
 	import VSMTimeline from '$lib/components/VSMTimeline.svelte';
+	import ShareButton from '$lib/components/ShareButton.svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
+	import { loadSharedData, clearShareParam } from '$lib/utils/shareUtils';
 
 	let presentationMode = false;
 	let showSidebar = false;
@@ -54,6 +56,18 @@
 	}
 
 	onMount(() => {
+		// Load shared data from URL if present
+		const sharedData = loadSharedData();
+		if (sharedData) {
+			try {
+				vsmStore.loadSharedData(sharedData);
+				// Clear the share parameter from URL after loading
+				clearShareParam();
+			} catch (e) {
+				console.error('Failed to load shared VSM:', e);
+			}
+		}
+
 		// Listen for fullscreen changes
 		const handleFullscreenChange = () => {
 			if (!document.fullscreenElement && presentationMode) {
@@ -88,6 +102,7 @@
 				</div>
 				<div class="header-actions">
 					<StreamManager />
+					<ShareButton />
 					<button class="menu-button" on:click={toggleSidebar}>
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 							<line x1="3" y1="6" x2="21" y2="6" />

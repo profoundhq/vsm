@@ -323,6 +323,32 @@ function createVSMStore() {
 			}
 		},
 
+		loadSharedData: (sharedData: any) => {
+			try {
+				update(state => {
+					// Merge shared streams with existing ones (avoid duplicates)
+					const existingStreamIds = new Set(state.streams.map(s => s.id));
+					const newStreams = sharedData.streams?.filter((s: any) => !existingStreamIds.has(s.id)) || [];
+
+					const allStreams = [...state.streams, ...newStreams];
+					const currentStream = sharedData.currentStreamId
+						? allStreams.find(s => s.id === sharedData.currentStreamId) || state.stream
+						: state.stream;
+
+					return {
+						...state,
+						streams: allStreams,
+						stream: currentStream,
+						currentStreamId: currentStream?.id || state.currentStreamId,
+						swimlanes: sharedData.swimlanes || state.swimlanes
+					};
+				});
+			} catch (e) {
+				console.error('Failed to load shared data:', e);
+				throw new Error('Failed to load shared VSM data');
+			}
+		},
+
 		// Chat
 		addMessage: (message: Omit<ChatMessage, 'id' | 'timestamp'>) => {
 			update(state => ({
