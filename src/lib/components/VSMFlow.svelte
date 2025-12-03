@@ -64,10 +64,72 @@
 		}
 	}
 
+	// Calculate positions for branching layouts using a simple tree algorithm
+	function calculateBranchingLayout(activities: any[], connections: any[]) {
+		const positions: Record<string, { x: number; y: number }> = {};
+		const spacing = 300;
+		const verticalSpacing = 200;
+		const startX = 100;
+		const startY = 200;
+
+		// Build adjacency list
+		const graph: Record<string, string[]> = {};
+		connections.forEach((conn) => {
+			if (!graph[conn.source]) graph[conn.source] = [];
+			graph[conn.source].push(conn.target);
+		});
+
+		// Calculate levels (distance from start-node)
+		const levels: Record<string, number> = { 'start-node': 0 };
+		const queue: string[] = ['start-node'];
+		const visited: Set<string> = new Set();
+
+		while (queue.length > 0) {
+			const current = queue.shift()!;
+			if (visited.has(current)) continue;
+			visited.add(current);
+
+			const children = graph[current] || [];
+			children.forEach((child) => {
+				if (!levels[child] || levels[child] > levels[current] + 1) {
+					levels[child] = levels[current] + 1;
+					queue.push(child);
+				}
+			});
+		}
+
+		// Group nodes by level
+		const nodesByLevel: Record<number, string[]> = {};
+		activities.forEach((activity) => {
+			const level = levels[activity.id] || 1;
+			if (!nodesByLevel[level]) nodesByLevel[level] = [];
+			nodesByLevel[level].push(activity.id);
+		});
+
+		// Position nodes
+		Object.entries(nodesByLevel).forEach(([levelStr, nodeIds]) => {
+			const level = parseInt(levelStr);
+			const x = startX + level * spacing;
+
+			// Vertically center nodes at this level
+			nodeIds.forEach((nodeId, index) => {
+				const totalNodes = nodeIds.length;
+				const offsetY = (index - (totalNodes - 1) / 2) * verticalSpacing;
+				positions[nodeId] = { x, y: startY + offsetY };
+			});
+		});
+
+		return positions;
+	}
+
 	function updateFlowFromActivities(activities: any[]) {
 		const spacing = 300;
 		const startX = 100;
 		const startY = 200;
+
+		// Check if stream has explicit connections (for branching support)
+		const connections = $vsmStore.stream?.connections;
+		const useConnections = connections && connections.length > 0;
 
 		// Reverse activities array for visual display (start to end, left to right)
 		// Activities are stored in reverse order [end, ..., start]
@@ -84,70 +146,120 @@
 			}
 		];
 
-		// Add activity nodes in the middle
-		visualOrder.forEach((activity, index) => {
-			newNodes.push({
-				id: activity.id,
-				type: 'vsmActivity',
-				position: { x: startX + (index + 1) * spacing, y: startY },
-				data: activity
+		if (useConnections) {
+			// Use graph-based layout for branching flows
+			const positions = calculateBranchingLayout(visualOrder, connections);
+			visualOrder.forEach((activity) => {
+				const pos = positions[activity.id] || { x: startX + spacing, y: startY };
+				newNodes.push({
+					id: activity.id,
+					type: 'vsmActivity',
+					position: pos,
+					data: activity
+				});
 			});
-		});
 
-		// Always create END node (rightmost)
-		newNodes.push({
-			id: 'end-node',
-			type: 'endNode',
-			position: { x: startX + (visualOrder.length + 1) * spacing, y: startY },
-			data: {},
-			draggable: false
-		});
+			// END node positioned after the rightmost node
+			const maxX = Math.max(...Object.values(positions).map((p: any) => p.x));
+			newNodes.push({
+				id: 'end-node',
+				type: 'endNode',
+				position: { x: maxX + spacing, y: startY },
+				data: {},
+				draggable: false
+			});
+		} else {
+			// Linear layout (legacy/default behavior)
+			visualOrder.forEach((activity, index) => {
+				newNodes.push({
+					id: activity.id,
+					type: 'vsmActivity',
+					position: { x: startX + (index + 1) * spacing, y: startY },
+					data: activity
+				});
+			});
 
-		// Create edges: START → activities → END
+			newNodes.push({
+				id: 'end-node',
+				type: 'endNode',
+				position: { x: startX + (visualOrder.length + 1) * spacing, y: startY },
+				data: {},
+				draggable: false
+			});
+		}
+
+		// Create edges
 		const newEdges: Edge[] = [];
 
-		// Connect START to first activity or END
-		if (visualOrder.length > 0) {
-			newEdges.push({
-				id: 'e-start-first',
-				source: 'start-node',
-				target: visualOrder[0].id,
-				animated: true,
-				style: 'stroke: #4a90e2; stroke-width: 2;'
-			});
-
-			// Connect activities to each other
-			for (let i = 0; i < visualOrder.length - 1; i++) {
+		if (useConnections) {
+			// Use explicit connections
+			connections.forEach((conn) => {
 				newEdges.push({
-					id: `e${visualOrder[i].id}-${visualOrder[i + 1].id}`,
-					source: visualOrder[i].id,
-					target: visualOrder[i + 1].id,
+					id: conn.id,
+					source: conn.source,
+					target: conn.target,
+					label: conn.label,
 					animated: true,
 					style: 'stroke: #4a90e2; stroke-width: 2;'
 				});
-			}
-
-			// Connect last activity to END
-			newEdges.push({
-				id: 'e-last-end',
-				source: visualOrder[visualOrder.length - 1].id,
-				target: 'end-node',
-				animated: true,
-				style: 'stroke: #4a90e2; stroke-width: 2;'
 			});
 		} else {
-			// No activities, connect START directly to END with dashed line
-			newEdges.push({
-				id: 'e-start-end',
-				source: 'start-node',
-				target: 'end-node',
-				animated: true,
-				style: 'stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 5;'
-			});
+			// Auto-generate linear connections (legacy behavior)
+			if (visualOrder.length > 0) {
+				newEdges.push({
+					id: 'e-start-first',
+					source: 'start-node',
+					target: visualOrder[0].id,
+					animated: true,
+					style: 'stroke: #4a90e2; stroke-width: 2;'
+				});
+
+				for (let i = 0; i < visualOrder.length - 1; i++) {
+					newEdges.push({
+						id: `e${visualOrder[i].id}-${visualOrder[i + 1].id}`,
+						source: visualOrder[i].id,
+						target: visualOrder[i + 1].id,
+						animated: true,
+						style: 'stroke: #4a90e2; stroke-width: 2;'
+					});
+				}
+
+				newEdges.push({
+					id: 'e-last-end',
+					source: visualOrder[visualOrder.length - 1].id,
+					target: 'end-node',
+					animated: true,
+					style: 'stroke: #4a90e2; stroke-width: 2;'
+				});
+			} else {
+				newEdges.push({
+					id: 'e-start-end',
+					source: 'start-node',
+					target: 'end-node',
+					animated: true,
+					style: 'stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 5;'
+				});
+			}
 		}
 
 		nodes.set(newNodes);
 		edges.set(newEdges);
+	}
+
+	function handleConnect(event: CustomEvent) {
+		const { source, target } = event.detail.connection;
+
+		// Don't allow connections if edit mode is disabled
+		if (!$uiStore.editModeEnabled) return;
+
+		// Create new connection
+		const connection = {
+			id: `e-${source}-${target}-${Date.now()}`,
+			source,
+			target
+		};
+
+		vsmStore.addConnection(connection);
 	}
 
 	function handleNodeClick(event: CustomEvent) {
@@ -197,7 +309,9 @@
 				{edges}
 				{nodeTypes}
 				fitView
+				connectionMode="loose"
 				on:nodeclick={handleNodeClick}
+				on:connect={handleConnect}
 			>
 				<Controls showInteractive={false}>
 					<button

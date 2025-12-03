@@ -37,10 +37,18 @@ export interface VSMActivity {
 	swimlane?: string; // Department/role
 }
 
+export interface VSMConnection {
+	id: string;
+	source: string; // Activity ID or 'start-node'
+	target: string; // Activity ID or 'end-node'
+	label?: string; // Optional label for conditional branches (e.g., "Approved", "Rejected")
+}
+
 export interface VSMStream {
 	id: string;
 	name: string;
 	activities: VSMActivity[];
+	connections?: VSMConnection[]; // Explicit connections for branching
 }
 
 export interface ChatMessage {

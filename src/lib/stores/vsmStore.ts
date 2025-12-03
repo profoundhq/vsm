@@ -1,5 +1,5 @@
 import { writable, get } from 'svelte/store';
-import type { VSMState, VSMStream, VSMActivity, ChatMessage, WorkflowStep, KaizenBurst } from '$lib/types/vsm';
+import type { VSMState, VSMStream, VSMActivity, VSMConnection, ChatMessage, WorkflowStep, KaizenBurst } from '$lib/types/vsm';
 
 const STORAGE_KEY = 'vsm-state';
 
@@ -347,6 +347,61 @@ function createVSMStore() {
 				console.error('Failed to load shared data:', e);
 				throw new Error('Failed to load shared VSM data');
 			}
+		},
+
+		// Connection management (for branching flows)
+		addConnection: (connection: { id: string; source: string; target: string; label?: string }) => {
+			update(state => {
+				if (!state.stream) return state;
+
+				const connections = state.stream.connections || [];
+				const updatedStream = {
+					...state.stream,
+					connections: [...connections, connection]
+				};
+
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === updatedStream.id ? updatedStream : s)
+				};
+			});
+		},
+
+		removeConnection: (connectionId: string) => {
+			update(state => {
+				if (!state.stream || !state.stream.connections) return state;
+
+				const updatedStream = {
+					...state.stream,
+					connections: state.stream.connections.filter(c => c.id !== connectionId)
+				};
+
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === updatedStream.id ? updatedStream : s)
+				};
+			});
+		},
+
+		updateConnectionLabel: (connectionId: string, label: string) => {
+			update(state => {
+				if (!state.stream || !state.stream.connections) return state;
+
+				const updatedStream = {
+					...state.stream,
+					connections: state.stream.connections.map(c =>
+						c.id === connectionId ? { ...c, label } : c
+					)
+				};
+
+				return {
+					...state,
+					stream: updatedStream,
+					streams: state.streams.map(s => s.id === updatedStream.id ? updatedStream : s)
+				};
+			});
 		},
 
 		// Chat
