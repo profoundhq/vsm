@@ -381,8 +381,12 @@
 
 	/* Mobile-optimized controls */
 	:global(.svelte-flow__controls) {
-		bottom: 10px;
+		top: 10px;
 		left: 10px;
+		bottom: auto;
+		right: auto;
+		width: auto;
+		max-width: fit-content;
 	}
 
 	:global(.svelte-flow__controls button) {
@@ -444,10 +448,6 @@
 	/* Ensure controls stay visible above panel */
 	:global(.svelte-flow__controls) {
 		z-index: 10;
-		top: 10px;
-		left: 10px;
-		bottom: auto;
-		width: auto;
 	}
 
 	/* Tablet and desktop */
@@ -504,6 +504,7 @@
 		:global(.svelte-flow__controls) {
 			top: 20px;
 			left: 20px;
+			right: auto;
 		}
 
 		:global(.svelte-flow__controls button) {
