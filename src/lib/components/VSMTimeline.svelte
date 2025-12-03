@@ -1,17 +1,67 @@
 <script lang="ts">
+	import { onMount, afterUpdate } from 'svelte';
 	import { vsmStore } from '$lib/stores/vsmStore';
 	import type { TimeUnit } from '$lib/types/vsm';
 
 	export let mode: 'stats' | 'ladder' | 'both' = 'both';
 
 	let isExpanded = true;
-
-	// Match the spacing and positioning from VSMFlow.svelte
-	const spacing = 300;
-	const startX = 100;
+	let ladderContainer: HTMLElement;
+	let segmentPositions: Record<string, number> = {};
 
 	$: activities = $vsmStore.stream?.activities || [];
 	$: visualOrder = [...activities].reverse(); // Match VSMFlow's visual order
+
+	// Update segment positions based on actual node positions in the DOM
+	function updateSegmentPositions() {
+		if (!ladderContainer || mode === 'stats') return;
+
+		const viewport = document.querySelector('.svelte-flow__viewport');
+		const nodes = document.querySelectorAll('.svelte-flow__node[data-id]');
+
+		if (!viewport || !nodes.length) return;
+
+		const ladderRect = ladderContainer.getBoundingClientRect();
+		const positions: Record<string, number> = {};
+
+		nodes.forEach((node) => {
+			const nodeId = node.getAttribute('data-id');
+			if (!nodeId || nodeId === 'start-node' || nodeId === 'end-node') return;
+
+			const nodeRect = node.getBoundingClientRect();
+			// Calculate position relative to ladder container
+			const relativeX = nodeRect.left - ladderRect.left + (nodeRect.width / 2);
+			positions[nodeId] = relativeX;
+		});
+
+		segmentPositions = positions;
+	}
+
+	onMount(() => {
+		updateSegmentPositions();
+
+		// Update positions when viewport changes (pan/zoom)
+		const observer = new MutationObserver(updateSegmentPositions);
+		const viewport = document.querySelector('.svelte-flow__viewport');
+		if (viewport) {
+			observer.observe(viewport, {
+				attributes: true,
+				attributeFilter: ['style']
+			});
+		}
+
+		// Also update on window resize
+		window.addEventListener('resize', updateSegmentPositions);
+
+		return () => {
+			observer.disconnect();
+			window.removeEventListener('resize', updateSegmentPositions);
+		};
+	});
+
+	afterUpdate(() => {
+		updateSegmentPositions();
+	});
 
 	// Helper to normalize time to minutes
 	function normalizeToMinutes(value: number, unit?: TimeUnit): number {
@@ -67,7 +117,7 @@
 		? (activities.reduce((product, a) => product * ((a.metrics?.completeAccurate || 100) / 100), 1) * 100).toFixed(1)
 		: 0;
 
-	// Calculate timeline segments (all in minutes) - using visualOrder to match node positions
+	// Calculate timeline segments (all in minutes)
 	$: timelineSegments = visualOrder.map((a, index) => {
 		const processMinutes = normalizeToMinutes(a.processTime || 0, a.processTimeUnit);
 		const leadMinutes = normalizeToMinutes(a.leadTime || 0, a.leadTimeUnit);
@@ -78,8 +128,7 @@
 			processDisplay: a.processTime ? `${a.processTime}${a.processTimeUnit || 'mins'}` : '',
 			leadTime: leadMinutes,
 			leadDisplay: a.leadTime ? `${a.leadTime}${a.leadTimeUnit || 'hours'}` : '',
-			waitTime: leadMinutes - processMinutes,
-			xPosition: startX + (index + 1) * spacing // Position matches the node in the flow
+			waitTime: leadMinutes - processMinutes
 		};
 	});
 
@@ -184,10 +233,10 @@
 						<span class="summary-item"><span class="legend-box process"></span> Process Time (value-add)</span>
 					</div>
 				</div>
-				<div class="timeline-ladder" style="min-width: {startX + (visualOrder.length + 2) * spacing}px;">
+				<div class="timeline-ladder" bind:this={ladderContainer}>
 					{#each timelineSegments as segment, index}
-						{#if segment.leadTime > 0}
-							<div class="ladder-segment" style="left: {segment.xPosition}px;">
+						{#if segment.leadTime > 0 && segmentPositions[segment.id] !== undefined}
+							<div class="ladder-segment" style="left: {segmentPositions[segment.id]}px;">
 								<!-- Wait Time (horizontal) -->
 								{#if segment.waitTime > 0}
 									<div class="time-section wait-section">
