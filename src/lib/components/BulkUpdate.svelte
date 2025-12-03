@@ -27,14 +27,8 @@
 			'processTimeUnit',
 			'leadTime',
 			'leadTimeUnit',
-			'valueAdd',
-			'defectRate',
-			'changeoverTime',
-			'changeoverTimeUnit',
-			'completeAccurate',
-			'uptime',
-			'operators',
-			'batchSize',
+			'errorRate',
+			'teamSize',
 			'swimlane',
 			'isConstraint'
 		];
@@ -45,14 +39,8 @@
 			a.processTimeUnit || '',
 			a.leadTime || '',
 			a.leadTimeUnit || '',
-			a.dimensions?.value || '',
 			a.dimensions?.defectRate || '',
-			a.dimensions?.changeoverTime || '',
-			a.dimensions?.changeoverTimeUnit || '',
-			a.metrics?.completeAccurate || '',
-			a.metrics?.uptime || '',
 			a.metrics?.operators || '',
-			a.metrics?.batchSize || '',
 			a.swimlane || '',
 			a.isConstraint ? 'true' : 'false'
 		]);
@@ -111,7 +99,7 @@
 		format = fmt;
 		if (fmt === 'csv') {
 			// Generate CSV content for editing
-			const headers = 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,valueAdd,defectRate,changeoverTime,changeoverTimeUnit,completeAccurate,uptime,operators,batchSize,swimlane,isConstraint';
+			const headers = 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,errorRate,teamSize,swimlane,isConstraint';
 			const rows = activities.map(a =>
 				[
 					a.name,
@@ -119,14 +107,8 @@
 					a.processTimeUnit || '',
 					a.leadTime || '',
 					a.leadTimeUnit || '',
-					a.dimensions?.value || '',
 					a.dimensions?.defectRate || '',
-					a.dimensions?.changeoverTime || '',
-					a.dimensions?.changeoverTimeUnit || '',
-					a.metrics?.completeAccurate || '',
-					a.metrics?.uptime || '',
 					a.metrics?.operators || '',
-					a.metrics?.batchSize || '',
 					a.swimlane || '',
 					a.isConstraint ? 'true' : 'false'
 				].join(',')
@@ -200,39 +182,15 @@
 							activity.leadTimeUnit = value;
 						}
 						break;
-					case 'valueAdd':
-						if (!activity.dimensions) activity.dimensions = {};
-						activity.dimensions.value = parseInt(value);
-						break;
-					case 'defectRate':
+					case 'errorRate':
+					case 'defectRate': // Support legacy name
 						if (!activity.dimensions) activity.dimensions = {};
 						activity.dimensions.defectRate = parseInt(value);
 						break;
-					case 'changeoverTime':
-						if (!activity.dimensions) activity.dimensions = {};
-						activity.dimensions.changeoverTime = parseInt(value);
-						break;
-					case 'changeoverTimeUnit':
-						if (value === 'mins' || value === 'hours' || value === 'days') {
-							if (!activity.dimensions) activity.dimensions = {};
-							activity.dimensions.changeoverTimeUnit = value;
-						}
-						break;
-					case 'completeAccurate':
+					case 'teamSize':
+					case 'operators': // Support legacy name
 						if (!activity.metrics) activity.metrics = {};
-						activity.metrics.completeAccurate = parseInt(value);
-						break;
-					case 'uptime':
-						if (!activity.metrics) activity.metrics = {};
-						activity.metrics.uptime = parseInt(value);
-						break;
-					case 'operators':
-						if (!activity.metrics) activity.metrics = {};
-						activity.metrics.operators = parseInt(value);
-						break;
-					case 'batchSize':
-						if (!activity.metrics) activity.metrics = {};
-						activity.metrics.batchSize = parseInt(value);
+						activity.metrics.operators = parseFloat(value);
 						break;
 					case 'swimlane':
 						activity.swimlane = value;
@@ -460,7 +418,7 @@
 					bind:value={editorContent}
 					class="editor-textarea"
 					spellcheck="false"
-					placeholder={format === 'csv' ? 'name,processTime,leadTime,...' : '- name: Activity 1\n  processTime: 5\n  ...'}
+					placeholder={format === 'csv' ? 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,errorRate,teamSize,swimlane,isConstraint' : '- name: Activity 1\n  processTime: 5\n  processTimeUnit: mins\n  ...'}
 				/>
 
 				{#if errorMessage}
