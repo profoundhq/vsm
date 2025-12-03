@@ -11,15 +11,10 @@
 
 	// Tooltip content for metrics
 	const tooltips = {
-		processTime: "Time the activity actually takes to perform (value-adding time). Measure by timing multiple cycles and taking the average.",
-		leadTime: "Total elapsed time from when work arrives until it's complete, including wait time. Track from activity start to completion.",
-		valueAdd: "Percentage of time spent adding value from the customer's perspective. Calculate: (Process Time / Lead Time) × 100",
-		defectRate: "Percentage of units requiring rework or scrapping. Track: (Defective Units / Total Units) × 100 over a period.",
-		changeoverTime: "Time needed to switch from one product/process to another. Measure from last good piece to first good piece of next run.",
-		completeAccurate: "Percentage of outputs that are 100% complete and accurate, requiring no rework. Track: (Perfect Units / Total Units) × 100",
-		uptime: "Percentage of scheduled production time that equipment is actually available. Calculate: (Available Time / Scheduled Time) × 100",
-		operators: "Number of people required to perform this activity. Count full-time equivalents if shared across activities.",
-		batchSize: "Number of units processed together before moving to next step. Observe the typical transfer batch size used."
+		activeWorkTime: "How long it takes to actually do the work (excluding waiting). Time yourself doing the task a few times and take the average.",
+		totalTime: "Total time from when the work arrives until it's finished, including any waiting or delays.",
+		errorRate: "Percentage of work that needs to be redone or has errors. Track mistakes over a week or month.",
+		teamSize: "Number of people needed to complete this activity. Use decimals for part-time (e.g., 0.5 for half a person's time)."
 	};
 
 	let name = activity.name;
@@ -27,14 +22,8 @@
 	let processTimeUnit: TimeUnit = activity.processTimeUnit || 'mins';
 	let leadTime = activity.leadTime?.toString() || '';
 	let leadTimeUnit: TimeUnit = activity.leadTimeUnit || 'hours';
-	let value = activity.dimensions?.value?.toString() || '';
 	let defectRate = activity.dimensions?.defectRate?.toString() || '';
-	let changeoverTime = activity.dimensions?.changeoverTime?.toString() || '';
-	let changeoverTimeUnit: TimeUnit = activity.dimensions?.changeoverTimeUnit || 'mins';
-	let completeAccurate = activity.metrics?.completeAccurate?.toString() || '';
-	let uptime = activity.metrics?.uptime?.toString() || '';
 	let operators = activity.metrics?.operators?.toString() || '';
-	let batchSize = activity.metrics?.batchSize?.toString() || '';
 	let isConstraint = activity.isConstraint || false;
 	let swimlane = activity.swimlane || '';
 	let kaizenBursts = activity.kaizenBursts || [];
@@ -68,16 +57,10 @@
 			leadTime: leadTime ? parseInt(leadTime) : undefined,
 			leadTimeUnit: leadTime ? leadTimeUnit : undefined,
 			dimensions: {
-				value: value ? parseInt(value) : undefined,
-				defectRate: defectRate ? parseInt(defectRate) : undefined,
-				changeoverTime: changeoverTime ? parseInt(changeoverTime) : undefined,
-				changeoverTimeUnit: changeoverTime ? changeoverTimeUnit : undefined
+				defectRate: defectRate ? parseInt(defectRate) : undefined
 			},
 			metrics: {
-				completeAccurate: completeAccurate ? parseInt(completeAccurate) : undefined,
-				uptime: uptime ? parseInt(uptime) : undefined,
-				operators: operators ? parseInt(operators) : undefined,
-				batchSize: batchSize ? parseInt(batchSize) : undefined
+				operators: operators ? parseFloat(operators) : undefined
 			},
 			isConstraint,
 			swimlane: swimlane || undefined,
@@ -135,12 +118,12 @@
 			</div>
 
 			<div class="form-section">
-				<h3 class="section-title">Timing</h3>
+				<h3 class="section-title">Time</h3>
 				<div class="form-row">
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Process Time
-							<MetricTooltip tip={tooltips.processTime} />
+							Active Work Time
+							<MetricTooltip tip={tooltips.activeWorkTime} />
 						</span>
 						<div class="time-input-group">
 							<input
@@ -159,8 +142,8 @@
 					</label>
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Lead Time
-							<MetricTooltip tip={tooltips.leadTime} />
+							Total Time
+							<MetricTooltip tip={tooltips.totalTime} />
 						</span>
 						<div class="time-input-group">
 							<input
@@ -181,26 +164,12 @@
 			</div>
 
 			<div class="form-section">
-				<h3 class="section-title">Dimensions</h3>
+				<h3 class="section-title">Quality & Resources</h3>
 				<div class="form-row">
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Value-Add (%)
-							<MetricTooltip tip={tooltips.valueAdd} />
-						</span>
-						<input
-							type="number"
-							bind:value={value}
-							class="form-input"
-							placeholder="0"
-							min="0"
-							max="100"
-						/>
-					</label>
-					<label class="form-label">
-						<span class="label-with-tooltip">
-							Defect Rate (%)
-							<MetricTooltip tip={tooltips.defectRate} />
+							Error Rate (%)
+							<MetricTooltip tip={tooltips.errorRate} />
 						</span>
 						<input
 							type="number"
@@ -211,67 +180,10 @@
 							max="100"
 						/>
 					</label>
-				</div>
-				<label class="form-label">
-					<span class="label-with-tooltip">
-						Changeover Time
-						<MetricTooltip tip={tooltips.changeoverTime} />
-					</span>
-					<div class="time-input-group">
-						<input
-							type="number"
-							bind:value={changeoverTime}
-							class="form-input time-value"
-							placeholder="0"
-							min="0"
-						/>
-						<select bind:value={changeoverTimeUnit} class="form-input time-unit">
-							<option value="mins">mins</option>
-							<option value="hours">hours</option>
-							<option value="days">days</option>
-						</select>
-					</div>
-				</label>
-			</div>
-
-			<div class="form-section">
-				<h3 class="section-title">VSM Metrics</h3>
-				<div class="form-row">
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							%C&A (%)
-							<MetricTooltip tip={tooltips.completeAccurate} />
-						</span>
-						<input
-							type="number"
-							bind:value={completeAccurate}
-							class="form-input"
-							placeholder="0"
-							min="0"
-							max="100"
-							title="% Complete & Accurate"
-						/>
-					</label>
-					<label class="form-label">
-						<span class="label-with-tooltip">
-							Uptime (%)
-							<MetricTooltip tip={tooltips.uptime} />
-						</span>
-						<input
-							type="number"
-							bind:value={uptime}
-							class="form-input"
-							placeholder="0"
-							min="0"
-							max="100"
-						/>
-					</label>
-				</div>
-				<div class="form-row">
-					<label class="form-label">
-						<span class="label-with-tooltip">
-							Operators
-							<MetricTooltip tip={tooltips.operators} />
+							Team Size
+							<MetricTooltip tip={tooltips.teamSize} />
 						</span>
 						<input
 							type="number"
@@ -279,28 +191,16 @@
 							class="form-input"
 							placeholder="0"
 							min="0"
-						/>
-					</label>
-					<label class="form-label">
-						<span class="label-with-tooltip">
-							Batch Size
-							<MetricTooltip tip={tooltips.batchSize} />
-						</span>
-						<input
-							type="number"
-							bind:value={batchSize}
-							class="form-input"
-							placeholder="0"
-							min="1"
+							step="0.5"
 						/>
 					</label>
 				</div>
 			</div>
 
 			<div class="form-section">
-				<h3 class="section-title">Department/Role</h3>
+				<h3 class="section-title">Team/Owner</h3>
 				<label class="form-label">
-					Swimlane
+					Who owns this activity?
 					<select bind:value={swimlane} class="form-input">
 						<option value="">None</option>
 						{#each availableSwimlanes as lane}
@@ -311,7 +211,7 @@
 			</div>
 
 			<div class="form-section">
-				<h3 class="section-title">Kaizen Bursts (Improvements)</h3>
+				<h3 class="section-title">Improvement Ideas</h3>
 				{#if kaizenBursts.length > 0}
 					<div class="bursts-list">
 						{#each kaizenBursts as burst}
@@ -327,7 +227,7 @@
 					<input
 						type="text"
 						bind:value={newBurstDescription}
-						placeholder="Improvement idea..."
+						placeholder="How could this be improved?"
 						class="form-input"
 					/>
 					<div class="form-row" style="margin-top: 8px;">
@@ -336,7 +236,7 @@
 							<option value="medium">Medium Priority</option>
 							<option value="high">High Priority</option>
 						</select>
-						<button type="button" class="btn btn-secondary" on:click={addKaizenBurst}>Add Burst</button>
+						<button type="button" class="btn btn-secondary" on:click={addKaizenBurst}>Add Idea</button>
 					</div>
 				</div>
 			</div>
@@ -348,7 +248,7 @@
 						bind:checked={isConstraint}
 						class="form-checkbox"
 					/>
-					<span>Mark as Constraint (bottleneck)</span>
+					<span>This is a bottleneck</span>
 				</label>
 			</div>
 
