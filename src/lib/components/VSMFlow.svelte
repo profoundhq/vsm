@@ -444,6 +444,8 @@
 	/* Ensure controls stay visible above panel */
 	:global(.svelte-flow__controls) {
 		z-index: 10;
+		top: 10px;
+		bottom: auto;
 	}
 
 	/* Tablet and desktop */
@@ -498,7 +500,7 @@
 		}
 
 		:global(.svelte-flow__controls) {
-			bottom: 20px;
+			top: 20px;
 			left: 20px;
 		}
 
