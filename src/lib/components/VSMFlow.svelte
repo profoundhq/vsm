@@ -426,10 +426,11 @@
 	/* Timeline Panel Styling */
 	:global(.svelte-flow__panel.bottom) {
 		display: flex;
-		justify-content: center;
+		justify-content: stretch;
 		align-items: flex-end;
 		padding: 0;
 		pointer-events: none;
+		width: 100%;
 		left: 0;
 		right: 0;
 		bottom: 0;
@@ -437,7 +438,7 @@
 
 	:global(.svelte-flow__panel.bottom > *) {
 		pointer-events: auto;
-		max-width: 100%;
+		width: 100%;
 	}
 
 	/* Ensure controls stay visible above panel */
