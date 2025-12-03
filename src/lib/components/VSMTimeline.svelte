@@ -237,23 +237,24 @@
 					{#each timelineSegments as segment, index}
 						{#if segment.leadTime > 0 && segmentPositions[segment.id] !== undefined}
 							<div class="ladder-segment" style="left: {segmentPositions[segment.id]}px;">
-								<!-- Wait Time (horizontal) -->
-								{#if segment.waitTime > 0}
-									<div class="time-section wait-section">
-										<div class="time-bar horizontal">
+								<div class="timeline-bar">
+									<!-- Wait Time (red, on top) -->
+									{#if segment.waitTime > 0}
+										<div class="wait-time" style="height: {Math.max(60, (segment.waitTime / maxLeadTime) * 120)}px;">
 											<div class="time-label">{formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}</div>
 										</div>
-									</div>
-								{/if}
-								<!-- Process Time (vertical drop) -->
-								{#if segment.processTime > 0}
-									<div class="time-section process-section">
-										<div class="time-bar vertical">
+									{/if}
+									<!-- Process Time (green, on bottom) -->
+									{#if segment.processTime > 0}
+										<div class="process-time" style="height: {Math.max(40, (segment.processTime / maxLeadTime) * 120)}px;">
 											<div class="time-label">{segment.processDisplay}</div>
 										</div>
-									</div>
-								{/if}
+									{/if}
+								</div>
 							</div>
+							{#if index < timelineSegments.length - 1}
+								<div class="timeline-connector" style="left: {segmentPositions[segment.id]}px;"></div>
+							{/if}
 						{/if}
 					{/each}
 				</div>
@@ -517,7 +518,7 @@
 	}
 
 	.legend-box.wait {
-		background: var(--color-british-gold);
+		background: var(--color-british-red);
 	}
 
 	.legend-box.process {
@@ -526,63 +527,61 @@
 
 	.timeline-ladder {
 		position: relative;
-		min-height: 100px;
+		min-height: 150px;
 		width: 100%;
-		border-bottom: 2px solid var(--color-british-blue);
-		padding-bottom: 12px;
+		display: flex;
+		align-items: flex-end;
+		padding-bottom: 20px;
 	}
 
 	.ladder-segment {
 		position: absolute;
-		top: 0;
+		bottom: 20px;
 		transform: translateX(-50%);
+	}
+
+	.timeline-bar {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		width: 80px;
 	}
 
-	.time-section {
+	.wait-time {
+		background: var(--color-british-red);
+		border: 3px solid var(--color-british-blue);
+		border-bottom: none;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		min-height: 60px;
 	}
 
-	.wait-section {
-		margin-bottom: 4px;
-	}
-
-	.time-bar.horizontal {
-		background: var(--color-british-gold);
-		border: 2px solid var(--color-british-blue);
-		padding: 4px 10px;
-		min-width: 50px;
-		text-align: center;
-	}
-
-	.time-bar.vertical {
+	.process-time {
 		background: var(--color-british-green);
-		border: 2px solid var(--color-british-blue);
-		padding: 10px 6px;
-		min-height: 40px;
+		border: 3px solid var(--color-british-blue);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		writing-mode: vertical-lr;
-		text-orientation: mixed;
+		min-height: 40px;
 	}
 
 	.time-label {
-		font-size: 10px;
+		font-size: 11px;
 		font-weight: 700;
 		color: white;
-		letter-spacing: 0.3px;
+		letter-spacing: 0.5px;
 		font-family: 'IBM Plex Sans', sans-serif;
-		white-space: nowrap;
+		text-align: center;
+		padding: 4px;
 	}
 
-	.time-bar.vertical .time-label {
-		writing-mode: vertical-lr;
-		transform: rotate(180deg);
+	.timeline-connector {
+		position: absolute;
+		bottom: 20px;
+		height: 3px;
+		width: 80px;
+		background: var(--color-british-blue);
+		transform: translateX(40px);
 	}
 
 	/* Tablet */
@@ -617,18 +616,17 @@
 			font-size: 12px;
 		}
 
-		.time-bar.horizontal {
-			min-width: 80px;
-			padding: 8px 14px;
-		}
-
-		.time-bar.vertical {
-			min-height: 60px;
-			padding: 14px 10px;
+		.timeline-bar {
+			width: 100px;
 		}
 
 		.time-label {
 			font-size: 12px;
+		}
+
+		.timeline-connector {
+			width: 100px;
+			transform: translateX(50px);
 		}
 	}
 
@@ -672,18 +670,21 @@
 			font-size: 12px;
 		}
 
-		.time-bar.horizontal {
-			min-width: 100px;
-			padding: 10px 16px;
+		.timeline-ladder {
+			min-height: 180px;
 		}
 
-		.time-bar.vertical {
-			min-height: 70px;
-			padding: 16px 12px;
+		.timeline-bar {
+			width: 120px;
 		}
 
 		.time-label {
 			font-size: 13px;
+		}
+
+		.timeline-connector {
+			width: 120px;
+			transform: translateX(60px);
 		}
 	}
 </style>
