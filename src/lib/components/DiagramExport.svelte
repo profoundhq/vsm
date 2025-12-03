@@ -18,9 +18,9 @@
 		closeMenu();
 
 		try {
-			// Get the viewport element which contains all nodes
-			const viewport = document.querySelector('.svelte-flow__viewport') as HTMLElement;
-			if (!viewport) {
+			// Get the entire flow container which contains both nodes and edges
+			const flowContainer = document.querySelector('.svelte-flow') as HTMLElement;
+			if (!flowContainer) {
 				alert('Flow diagram not found');
 				return;
 			}
@@ -33,14 +33,14 @@
 			}
 
 			// Calculate the bounding box of all nodes
+			const flowRect = flowContainer.getBoundingClientRect();
 			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
 			nodes.forEach((node) => {
 				const rect = node.getBoundingClientRect();
-				const viewportRect = viewport.getBoundingClientRect();
-
-				// Convert to viewport coordinates
-				const x = rect.left - viewportRect.left;
-				const y = rect.top - viewportRect.top;
+				// Convert to flow container coordinates
+				const x = rect.left - flowRect.left;
+				const y = rect.top - flowRect.top;
 
 				minX = Math.min(minX, x);
 				minY = Math.min(minY, y);
@@ -58,8 +58,8 @@
 			const width = maxX - minX;
 			const height = maxY - minY;
 
-			// Capture the viewport with high resolution
-			const canvas = await html2canvas(viewport, {
+			// Capture the entire flow container with high resolution
+			const canvas = await html2canvas(flowContainer, {
 				backgroundColor: '#FFF8DC', // British Rail cream
 				scale: 2, // High resolution
 				logging: false,
@@ -86,9 +86,9 @@
 		closeMenu();
 
 		try {
-			// Get the viewport element which contains all nodes
-			const viewport = document.querySelector('.svelte-flow__viewport') as HTMLElement;
-			if (!viewport) {
+			// Get the entire flow container which contains both nodes and edges
+			const flowContainer = document.querySelector('.svelte-flow') as HTMLElement;
+			if (!flowContainer) {
 				alert('Flow diagram not found');
 				return;
 			}
@@ -101,14 +101,14 @@
 			}
 
 			// Calculate the bounding box of all nodes
+			const flowRect = flowContainer.getBoundingClientRect();
 			let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
 			nodes.forEach((node) => {
 				const rect = node.getBoundingClientRect();
-				const viewportRect = viewport.getBoundingClientRect();
-
-				// Convert to viewport coordinates
-				const x = rect.left - viewportRect.left;
-				const y = rect.top - viewportRect.top;
+				// Convert to flow container coordinates
+				const x = rect.left - flowRect.left;
+				const y = rect.top - flowRect.top;
 
 				minX = Math.min(minX, x);
 				minY = Math.min(minY, y);
@@ -126,8 +126,8 @@
 			const width = maxX - minX;
 			const height = maxY - minY;
 
-			// Capture the viewport with high resolution
-			const canvas = await html2canvas(viewport, {
+			// Capture the entire flow container with high resolution
+			const canvas = await html2canvas(flowContainer, {
 				backgroundColor: '#FFF8DC', // British Rail cream
 				scale: 2,
 				logging: false,

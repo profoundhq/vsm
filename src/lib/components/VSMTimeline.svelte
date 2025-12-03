@@ -240,21 +240,18 @@
 								<div class="timeline-bar">
 									<!-- Wait Time (red, on top) -->
 									{#if segment.waitTime > 0}
-										<div class="wait-time" style="height: {Math.max(60, (segment.waitTime / maxLeadTime) * 120)}px;">
+										<div class="wait-time" style="height: {Math.max(40, (segment.waitTime / maxLeadTime) * 80)}px;">
 											<div class="time-label">{formatTime(segment.waitTime).value}{formatTime(segment.waitTime).unit}</div>
 										</div>
 									{/if}
 									<!-- Process Time (green, on bottom) -->
 									{#if segment.processTime > 0}
-										<div class="process-time" style="height: {Math.max(40, (segment.processTime / maxLeadTime) * 120)}px;">
+										<div class="process-time" style="height: {Math.max(30, (segment.processTime / maxLeadTime) * 80)}px;">
 											<div class="time-label">{segment.processDisplay}</div>
 										</div>
 									{/if}
 								</div>
 							</div>
-							{#if index < timelineSegments.length - 1}
-								<div class="timeline-connector" style="left: {segmentPositions[segment.id]}px;"></div>
-							{/if}
 						{/if}
 					{/each}
 				</div>
@@ -527,7 +524,7 @@
 
 	.timeline-ladder {
 		position: relative;
-		min-height: 150px;
+		min-height: 100px;
 		width: 100%;
 		display: flex;
 		align-items: flex-end;
@@ -553,7 +550,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 60px;
+		min-height: 40px;
 	}
 
 	.process-time {
@@ -562,7 +559,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-height: 40px;
+		min-height: 30px;
 	}
 
 	.time-label {
@@ -573,15 +570,6 @@
 		font-family: 'IBM Plex Sans', sans-serif;
 		text-align: center;
 		padding: 4px;
-	}
-
-	.timeline-connector {
-		position: absolute;
-		bottom: 20px;
-		height: 3px;
-		width: 80px;
-		background: var(--color-british-blue);
-		transform: translateX(40px);
 	}
 
 	/* Tablet */
