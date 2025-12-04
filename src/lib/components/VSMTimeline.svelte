@@ -150,7 +150,7 @@
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expand-icon" class:expanded={isExpanded}>
 						<polyline points="6 9 12 15 18 9" />
 					</svg>
-					<h3>Timeline & Statistics</h3>
+					<h3>Statistics</h3>
 				</div>
 				<div class="header-stats">
 					<span class="quick-stat">PCE: <strong>{cycleEfficiency}%</strong></span>

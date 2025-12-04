@@ -197,18 +197,6 @@
 				</div>
 			</div>
 
-			<div class="form-section">
-				<h3 class="section-title">Department</h3>
-				<label class="form-label">
-					Which team or department handles this?
-					<select bind:value={swimlane} class="form-input">
-						<option value="">None</option>
-						{#each availableSwimlanes as lane}
-							<option value={lane}>{lane}</option>
-						{/each}
-					</select>
-				</label>
-			</div>
 
 			<div class="form-section">
 				<h3 class="section-title">Improvement Ideas</h3>
