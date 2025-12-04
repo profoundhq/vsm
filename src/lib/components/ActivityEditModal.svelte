@@ -198,9 +198,9 @@
 			</div>
 
 			<div class="form-section">
-				<h3 class="section-title">Team/Owner</h3>
+				<h3 class="section-title">Department</h3>
 				<label class="form-label">
-					Who owns this activity?
+					Which team or department handles this?
 					<select bind:value={swimlane} class="form-input">
 						<option value="">None</option>
 						{#each availableSwimlanes as lane}
