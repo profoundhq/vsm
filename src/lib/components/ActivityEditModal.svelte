@@ -13,8 +13,9 @@
 	const tooltips = {
 		activeWorkTime: "How long it takes to actually do the work (excluding waiting). Time yourself doing the task a few times and take the average.",
 		totalTime: "Total time from when the work arrives until it's finished, including any waiting or delays.",
-		errorRate: "Percentage of work that needs to be redone or has errors. Track mistakes over a week or month.",
-		teamSize: "Number of people needed to complete this activity. Use decimals for part-time (e.g., 0.5 for half a person's time)."
+		completeAccurate: "What percentage of work is completed correctly the first time and passes cleanly to the next step without rework? (100% = perfect, no rework needed)",
+		teamSize: "Number of people needed to complete this activity. Use decimals for part-time (e.g., 0.5 for half a person's time).",
+		queueSize: "How many items are typically waiting to be worked on? This waiting work adds to your total lead time."
 	};
 
 	let name = activity.name;
@@ -22,8 +23,9 @@
 	let processTimeUnit: TimeUnit = activity.processTimeUnit || 'mins';
 	let leadTime = activity.leadTime?.toString() || '';
 	let leadTimeUnit: TimeUnit = activity.leadTimeUnit || 'hours';
-	let defectRate = activity.dimensions?.defectRate?.toString() || '';
+	let completeAccurate = activity.metrics?.completeAccurate?.toString() || '';
 	let operators = activity.metrics?.operators?.toString() || '';
+	let batchSize = activity.metrics?.batchSize?.toString() || '';
 	let isConstraint = activity.isConstraint || false;
 	let swimlane = activity.swimlane || '';
 	let kaizenBursts = activity.kaizenBursts || [];
@@ -56,11 +58,10 @@
 			processTimeUnit: processTime ? processTimeUnit : undefined,
 			leadTime: leadTime ? parseInt(leadTime) : undefined,
 			leadTimeUnit: leadTime ? leadTimeUnit : undefined,
-			dimensions: {
-				defectRate: defectRate ? parseInt(defectRate) : undefined
-			},
 			metrics: {
-				operators: operators ? parseFloat(operators) : undefined
+				completeAccurate: completeAccurate ? parseInt(completeAccurate) : undefined,
+				operators: operators ? parseFloat(operators) : undefined,
+				batchSize: batchSize ? parseInt(batchSize) : undefined
 			},
 			isConstraint,
 			swimlane: swimlane || undefined,
@@ -168,14 +169,14 @@
 				<div class="form-row">
 					<label class="form-label">
 						<span class="label-with-tooltip">
-							Error Rate (%)
-							<MetricTooltip tip={tooltips.errorRate} />
+							%C&A (Complete & Accurate)
+							<MetricTooltip tip={tooltips.completeAccurate} />
 						</span>
 						<input
 							type="number"
-							bind:value={defectRate}
+							bind:value={completeAccurate}
 							class="form-input"
-							placeholder="0"
+							placeholder="100"
 							min="0"
 							max="100"
 						/>
@@ -195,6 +196,21 @@
 						/>
 					</label>
 				</div>
+			<div class="form-row">
+				<label class="form-label">
+					<span class="label-with-tooltip">
+						Queue Size
+						<MetricTooltip tip={tooltips.queueSize} />
+					</span>
+					<input
+						type="number"
+						bind:value={batchSize}
+						class="form-input"
+						placeholder="0"
+						min="0"
+					/>
+				</label>
+			</div>
 			</div>
 
 

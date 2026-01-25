@@ -98,9 +98,6 @@
 		? (totalProcessTimeMinutes / totalLeadTimeMinutes * 100).toFixed(1)
 		: 0;
 	$: activityCount = activities.length;
-	$: averageDefectRate = activities.length > 0
-		? (activities.reduce((sum, a) => sum + (a.dimensions?.defectRate || 0), 0) / activities.length).toFixed(1)
-		: 0;
 
 	// Calculate VSM metrics
 	$: averageCompleteAccurate = activities.length > 0
@@ -211,13 +208,6 @@
 					</div>
 				{/if}
 
-				{#if averageDefectRate > 0}
-					<div class="stat-card warning">
-						<div class="stat-value">{averageDefectRate}%</div>
-						<div class="stat-label">Avg Defect Rate</div>
-						<div class="stat-help">Requires rework</div>
-					</div>
-				{/if}
 			</div>
 			{/if}
 		</div>

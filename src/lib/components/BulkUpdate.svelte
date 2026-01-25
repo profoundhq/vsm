@@ -28,8 +28,9 @@
 			'processTimeUnit',
 			'leadTime',
 			'leadTimeUnit',
-			'errorRate',
+			'completeAccurate',
 			'teamSize',
+			'queueSize',
 			'swimlane',
 			'isConstraint'
 		];
@@ -41,6 +42,7 @@
 			a.leadTime || '',
 			a.leadTimeUnit || '',
 			a.dimensions?.defectRate || '',
+			a.metrics?.batchSize || '',
 			a.metrics?.operators || '',
 			a.swimlane || '',
 			a.isConstraint ? 'true' : 'false'
@@ -106,7 +108,7 @@
 		format = fmt;
 		if (fmt === 'csv') {
 			// Generate CSV content for editing
-			const headers = 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,errorRate,teamSize,swimlane,isConstraint';
+			const headers = 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,completeAccurate,teamSize,queueSize,swimlane,isConstraint';
 			const rows = activities.map(a =>
 				[
 					a.name,
@@ -114,8 +116,9 @@
 					a.processTimeUnit || '',
 					a.leadTime || '',
 					a.leadTimeUnit || '',
-					a.dimensions?.defectRate || '',
+					a.metrics?.completeAccurate || '',
 					a.metrics?.operators || '',
+					a.metrics?.batchSize || '',
 					a.swimlane || '',
 					a.isConstraint ? 'true' : 'false'
 				].join(',')
@@ -193,16 +196,26 @@
 							activity.leadTimeUnit = value;
 						}
 						break;
-					case 'errorRate':
-					case 'defectRate': // Support legacy name
-						if (!activity.dimensions) activity.dimensions = {};
-						activity.dimensions.defectRate = parseInt(value);
-						break;
-					case 'teamSize':
-					case 'operators': // Support legacy name
-						if (!activity.metrics) activity.metrics = {};
-						activity.metrics.operators = parseFloat(value);
-						break;
+				case 'completeAccurate':
+					if (!activity.metrics) activity.metrics = {};
+					activity.metrics.completeAccurate = parseInt(value);
+					break;
+				case 'errorRate': // Legacy: convert error rate to C&A
+				case 'defectRate': // Legacy: convert defect rate to C&A
+					if (!activity.metrics) activity.metrics = {};
+					// Convert error/defect rate to %C&A (inverse)
+					const errorVal = parseInt(value);
+					activity.metrics.completeAccurate = errorVal > 0 ? 100 - errorVal : undefined;
+					break;
+				case 'teamSize':
+				case 'operators': // Support legacy name
+					if (!activity.metrics) activity.metrics = {};
+					activity.metrics.operators = parseFloat(value);
+					break;
+				case 'queueSize':
+					if (!activity.metrics) activity.metrics = {};
+					activity.metrics.batchSize = parseInt(value);
+					break;
 					case 'swimlane':
 						activity.swimlane = value;
 						break;
@@ -461,7 +474,7 @@
 					bind:value={editorContent}
 					class="editor-textarea"
 					spellcheck="false"
-					placeholder={format === 'csv' ? 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,errorRate,teamSize,swimlane,isConstraint' : '- name: Activity 1\n  processTime: 5\n  processTimeUnit: mins\n  ...'}
+					placeholder={format === 'csv' ? 'name,processTime,processTimeUnit,leadTime,leadTimeUnit,completeAccurate,teamSize,queueSize,swimlane,isConstraint' : '- name: Activity 1\n  processTime: 5\n  processTimeUnit: mins\n  ...'}
 				/>
 
 				{#if errorMessage}
